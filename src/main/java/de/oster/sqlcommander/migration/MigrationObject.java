@@ -1,8 +1,8 @@
-package de.oster.sqlcommander.persistence;
+package de.oster.sqlcommander.migration;
 
 import java.util.Date;
 
-public class Migration
+class MigrationObject
 {
     private String version;
 
@@ -14,7 +14,7 @@ public class Migration
 
     private Date created;
 
-    public Migration() {
+    public MigrationObject() {
     }
 
     public String getVersion() {

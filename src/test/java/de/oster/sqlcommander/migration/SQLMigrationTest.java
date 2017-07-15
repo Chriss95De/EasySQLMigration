@@ -1,6 +1,5 @@
-import de.oster.sqlcommander.EasySQLMigration;
-import de.oster.sqlcommander.SQLMigration;
-import de.oster.sqlcommander.jdbc.exception.SQLMigrationException;
+package de.oster.sqlcommander.migration;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,7 +10,8 @@ public class SQLMigrationTest extends CustomTest
 {
     @Test
     public void migrateSQLScript() throws Exception {
-        EasySQLMigration sqlMigration = new SQLMigration(CustomTest.jdbcDriver, CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
+
+        EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcDriver, CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
         Assert.assertNotNull(sqlMigration);
 
         sqlMigration.setSQLScripts("./sql", "./sql2");

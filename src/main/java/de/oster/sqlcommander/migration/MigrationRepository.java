@@ -1,7 +1,6 @@
-package de.oster.sqlcommander.persistence;
+package de.oster.sqlcommander.migration;
 
-import de.oster.sqlcommander.jdbc.PersistenceManager;
-import de.oster.sqlcommander.migration.SQLScriptObject;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.Timestamp;
@@ -9,7 +8,7 @@ import java.sql.Timestamp;
 /**
  * Created by Christian on 13.07.2017.
  */
-public class MigrationRepository
+class MigrationRepository
 {
     public static void createMigrationTableIfNotExist(String migrationTable)
     {
@@ -34,7 +33,7 @@ public class MigrationRepository
                 ");");
     }
 
-    public static void updateMigration(Migration migration, String migrationTable)
+    public static void updateMigration(MigrationObject migration, String migrationTable)
     {
         PersistenceManager.get().update("UPDATE "+migrationTable +
                 " SET " +
@@ -46,11 +45,11 @@ public class MigrationRepository
                 " WHERE version = '"+migration.getVersion()+"';");
     }
 
-    public static Migration getMigrationByVersion(SQLScriptObject sqlScriptObject, String migrationTable)
+    public static MigrationObject getMigrationByVersion(SQLScriptObject sqlScriptObject, String migrationTable)
     {
         try
         {
-            Migration migration = PersistenceManager.get().queryForObject(
+            MigrationObject migration = PersistenceManager.get().queryForObject(
                     "SELECT * FROM " + migrationTable + " WHERE version = '" + sqlScriptObject.getVersion() + "'",
                     new MigrationRowMapper());
             return migration;

@@ -1,4 +1,4 @@
-package de.oster.sqlcommander.persistence;
+package de.oster.sqlcommander.migration;
 
 import org.springframework.jdbc.core.RowMapper;
 
@@ -8,11 +8,11 @@ import java.sql.SQLException;
 /**
  * Created by Christian on 14.07.2017.
  */
-public class MigrationRowMapper implements RowMapper<Migration>
+class MigrationRowMapper implements RowMapper<MigrationObject>
 {
-    public Migration mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public MigrationObject mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-        Migration migration = new Migration();
+        MigrationObject migration = new MigrationObject();
         migration.setName(rs.getString("name"));
         migration.setVersion(rs.getString("version"));
         migration.setHash(rs.getString("hash"));

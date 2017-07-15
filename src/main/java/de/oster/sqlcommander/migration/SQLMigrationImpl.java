@@ -1,13 +1,7 @@
-package de.oster.sqlcommander;
+package de.oster.sqlcommander.migration;
 
-import de.oster.sqlcommander.jdbc.PersistenceManager;
-import de.oster.sqlcommander.jdbc.exception.SQLMigrationException;
-import de.oster.sqlcommander.migration.MigrationImpl;
-import de.oster.sqlcommander.migration.SQLScriptObject;
-import de.oster.sqlcommander.persistence.Migration;
-import de.oster.sqlcommander.persistence.MigrationRepository;
+import de.oster.sqlcommander.migration.exception.SQLMigrationException;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,7 +9,7 @@ import java.util.List;
 /**
  * Created by Christian on 12.07.2017.
  */
-public final class SQLMigration extends MigrationImpl implements EasySQLMigration
+class SQLMigrationImpl extends Migration implements SQLMigrationAPI
 {
     private static Logger log = Logger.getRootLogger();
 
@@ -28,7 +22,7 @@ public final class SQLMigration extends MigrationImpl implements EasySQLMigratio
     private String[] urlPath;
     private String[] prefixes = {"sql"};
 
-    public SQLMigration(String jdbcDriver, String jdbcURL, String user, String password) throws Exception
+    public SQLMigrationImpl(String jdbcDriver, String jdbcURL, String user, String password) throws Exception
     {
         PersistenceManager.initEntityManagerFactory(jdbcDriver, jdbcURL, user, password);
     }
@@ -52,19 +46,19 @@ public final class SQLMigration extends MigrationImpl implements EasySQLMigratio
         {
             String completeScriptName = sqlScriptObj.getVersion() + versionFileNameSeparator + sqlScriptObj.getName();
             log.info("");
-            log.info("started migration " + completeScriptName);
+            log.info("started sqlmigration " + completeScriptName);
 
             //Add if missing
             this.addMigrationEntry(sqlScriptObj);
 
             //check hash
-            Migration migration = MigrationRepository.getMigrationByVersion(sqlScriptObj, migrationTableName);
+            MigrationObject migration = MigrationRepository.getMigrationByVersion(sqlScriptObj, migrationTableName);
             if(!sqlScriptObj.getHash().equals(migration.getHash()))
                 throw new SQLMigrationException(
-                        "\nfailed to apply migration: "+completeScriptName+ "\n " +
-                        "missmatch between allready applied version and current migration \n" +
-                        " applied migration -> (hash:"+ migration.getHash() +") \n" +
-                        " current migration -> (hash:"+ sqlScriptObj.getHash()+")");
+                        "\nfailed to apply sqlmigration: "+completeScriptName+ "\n " +
+                        "missmatch between allready applied version and current sqlmigration \n" +
+                        " applied sqlmigration -> (hash:"+ migration.getHash() +") \n" +
+                        " current sqlmigration -> (hash:"+ sqlScriptObj.getHash()+")");
 
             if(migration.didRun() == false)
             {
@@ -73,14 +67,14 @@ public final class SQLMigration extends MigrationImpl implements EasySQLMigratio
 
                 migration.setDidRun(true);
                 MigrationRepository.updateMigration(migration, migrationTableName);
-                log.info("applied migration");
+                log.info("applied sqlmigration");
             }
             else
             {
                 log.info("nothing to migrate");
             }
 
-            log.info("ended migration: " + completeScriptName);
+            log.info("ended sqlmigration: " + completeScriptName);
         }
         log.info("");
     }

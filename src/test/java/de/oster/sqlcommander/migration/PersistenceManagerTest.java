@@ -1,4 +1,5 @@
-import de.oster.sqlcommander.jdbc.PersistenceManager;
+package de.oster.sqlcommander.migration;
+
 import org.junit.Assert;
 import org.junit.Test;
 

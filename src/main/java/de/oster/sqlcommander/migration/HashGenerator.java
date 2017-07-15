@@ -1,15 +1,14 @@
-package de.oster.sqlcommander.migration.util;
+package de.oster.sqlcommander.migration;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**
  * Created by Christian on 14.07.2017.
  */
-public class HashGenerator
+class HashGenerator
 {
     public static String getHash(File file) throws IOException {
 

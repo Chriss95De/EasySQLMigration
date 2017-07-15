@@ -1,9 +1,9 @@
-package de.oster.sqlcommander.migration.util;
+package de.oster.sqlcommander.migration;
 
 /**
  * Created by Christian on 12.07.2017.
  */
-public class ByteArrayHexConverter
+class ByteArrayHexConverter
 {
     public static String toHexString(byte[] bytes) {
         StringBuilder hexString = new StringBuilder();

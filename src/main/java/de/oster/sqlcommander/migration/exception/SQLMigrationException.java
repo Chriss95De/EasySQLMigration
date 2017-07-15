@@ -1,4 +1,4 @@
-package de.oster.sqlcommander.jdbc.exception;
+package de.oster.sqlcommander.migration.exception;
 
 import java.sql.SQLException;
 

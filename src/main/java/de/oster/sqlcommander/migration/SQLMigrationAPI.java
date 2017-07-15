@@ -1,11 +1,11 @@
-package de.oster.sqlcommander;
+package de.oster.sqlcommander.migration;
 
-import de.oster.sqlcommander.jdbc.exception.SQLMigrationException;
+import de.oster.sqlcommander.migration.exception.SQLMigrationException;
 
 /**
  * Created by Christian on 15.07.2017.
  */
-public interface EasySQLMigration
+interface SQLMigrationAPI
 {
     public void migrate() throws SQLMigrationException;
 
@@ -14,7 +14,6 @@ public interface EasySQLMigration
     public void setSeparator(String separator);
 
     public String getSeparator();
-
 
     public String getJdbcDriver();
 

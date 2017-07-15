@@ -1,4 +1,4 @@
-package de.oster.sqlcommander.jdbc;
+package de.oster.sqlcommander.migration;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -10,7 +10,7 @@ import java.sql.Driver;
 /**
  * Created by Christian on 12.07.2017.
  */
-public class PersistenceManager
+class PersistenceManager
 {
     private static JdbcTemplate jdbcTemplate;
 

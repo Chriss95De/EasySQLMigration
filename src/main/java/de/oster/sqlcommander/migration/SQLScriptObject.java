@@ -1,20 +1,15 @@
 package de.oster.sqlcommander.migration;
 
-import de.oster.sqlcommander.jdbc.exception.SQLMigrationException;
-import de.oster.sqlcommander.migration.util.ByteArrayHexConverter;
-import de.oster.sqlcommander.migration.util.HashGenerator;
+import de.oster.sqlcommander.migration.exception.SQLMigrationException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by Christian on 12.07.2017.
  */
-public class SQLScriptObject
+class SQLScriptObject
 {
     private String name;
 
@@ -81,7 +76,7 @@ public class SQLScriptObject
         int lastOcc = file.getName().lastIndexOf(separator);
 
         if(lastOcc == -1)
-            throw new SQLMigrationException("\nbad syntax in your migration filename: " + file.getName() + "\n"+
+            throw new SQLMigrationException("\nbad syntax in your sqlmigration filename: " + file.getName() + "\n"+
                     "seperator -> " + separator  + " not found");
 
         SQLScriptObject sqlScriptObject = new SQLScriptObject(

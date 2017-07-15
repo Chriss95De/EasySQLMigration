@@ -1,10 +1,7 @@
 package de.oster.sqlcommander.migration;
 
-import de.oster.sqlcommander.SQLMigration;
-import de.oster.sqlcommander.jdbc.exception.SQLMigrationException;
-import de.oster.sqlcommander.persistence.MigrationRepository;
+import de.oster.sqlcommander.migration.exception.SQLMigrationException;
 import org.apache.commons.io.FileUtils;
-import de.oster.sqlcommander.persistence.Migration;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +10,7 @@ import java.util.*;
 /**
  * Created by Christian on 12.07.2017.
  */
-public class MigrationImpl
+class Migration
 {
     public String versionFileNameSeparator = "_";
     public String versionSeparator = "_";
@@ -23,10 +20,10 @@ public class MigrationImpl
 
     public void addMigrationEntry(SQLScriptObject sqlScriptObj) {
 
-        //create the migration
+        //create the sqlmigration
         MigrationRepository.createMigrationTableIfNotExist(migrationTableName);
 
-        Migration migration = MigrationRepository.getMigrationByVersion(sqlScriptObj, migrationTableName);
+        MigrationObject migration = MigrationRepository.getMigrationByVersion(sqlScriptObj, migrationTableName);
         if(migration == null)
         {
             MigrationRepository.addNewMigration(sqlScriptObj, migrationTableName);
@@ -87,7 +84,7 @@ public class MigrationImpl
             }
             catch (NumberFormatException exc)
             {
-                throw new SQLMigrationException("\nbad syntax in your migration filename: " + sqlScriptObject.getVersion()+versionFileNameSeparator+sqlScriptObject.getName() + "\n"+
+                throw new SQLMigrationException("\nbad syntax in your sqlmigration filename: " + sqlScriptObject.getVersion()+versionFileNameSeparator+sqlScriptObject.getName() + "\n"+
                 "can not parse the version information");
             }
         }
