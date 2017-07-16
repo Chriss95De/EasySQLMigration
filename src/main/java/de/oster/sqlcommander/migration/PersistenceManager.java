@@ -1,5 +1,6 @@
 package de.oster.sqlcommander.migration;
 
+import de.oster.sqlcommander.Connection;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -14,17 +15,23 @@ class PersistenceManager
 {
     private static JdbcTemplate jdbcTemplate;
 
-    public static void initEntityManagerFactory(String jdbcDriver, String jdbcURL, String user, String password) throws Exception {
+    public static void initEntityManagerFactory(Connection connection) {
 
         DataSource ds = null;
         try
         {
-            ds = new SimpleDriverDataSource((Driver)Class.forName(jdbcDriver).newInstance(),jdbcURL, user, password);
+            ds = new SimpleDriverDataSource((Driver)Class.forName(
+                    connection.getJdbcDriver()).newInstance(),
+                    connection.getJdbcURL(),
+                    connection.getUser(),
+                    connection.getPassword());
         }
-        catch (Exception e)
+        catch (Exception exc)
         {
-            throw e;
+          exc.printStackTrace();
+          System.exit(1);
         }
+
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcTemplate.execute("SELECT 1");
     }

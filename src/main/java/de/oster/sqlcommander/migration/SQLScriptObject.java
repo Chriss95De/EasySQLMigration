@@ -1,6 +1,7 @@
 package de.oster.sqlcommander.migration;
 
 import de.oster.sqlcommander.migration.exception.SQLMigrationException;
+import de.oster.sqlcommander.migration.util.HashGenerator;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;

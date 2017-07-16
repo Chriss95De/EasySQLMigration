@@ -1,7 +1,10 @@
 package de.oster.sqlcommander.migration;
 
+import de.oster.sqlcommander.Connection;
 import de.oster.sqlcommander.migration.exception.SQLMigrationException;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.springframework.jdbc.BadSqlGrammarException;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,25 +15,38 @@ import java.util.*;
  */
 class Migration
 {
-    public String versionFileNameSeparator = "_";
-    public String versionSeparator = "_";
+    private static Logger log = Logger.getRootLogger();
 
-    public String migrationTableName = "sql_migration";
+    //JDBC Information
+    Connection connection;
+
+    protected String[] urlPath;
+    protected String[] prefixes = {"sql"};
+
+    protected String versionFileNameSeparator = "_";
+    protected String versionSeparator = "_";
+
+    private String internalVersionSeparator = ".";
+
+    protected String migrationTableName = "sql_migration";
+    protected String schema = "public";
+
+    protected String schemaWithTabel = schema+"."+migrationTableName;
 
 
-    public void addMigrationEntry(SQLScriptObject sqlScriptObj) {
+    protected void addMigrationEntry(SQLScriptObject sqlScriptObj) {
 
         //create the sqlmigration
-        MigrationRepository.createMigrationTableIfNotExist(migrationTableName);
+        MigrationRepository.createMigrationTableIfNotExist(schemaWithTabel);
 
-        MigrationObject migration = MigrationRepository.getMigrationByVersion(sqlScriptObj, migrationTableName);
+        MigrationObject migration = MigrationRepository.getMigrationByVersion(sqlScriptObj, schemaWithTabel);
         if(migration == null)
         {
-            MigrationRepository.addNewMigration(sqlScriptObj, migrationTableName);
+            MigrationRepository.addNewMigration(sqlScriptObj, schemaWithTabel);
         }
     }
 
-    public List<SQLScriptObject> searchSQLScripts(String[] paths, String[] prefixes, boolean recursive) throws IOException, SQLMigrationException {
+    protected List<SQLScriptObject> searchSQLScripts(String[] paths, String[] prefixes, boolean recursive) throws IOException, SQLMigrationException {
         List<File> files = new ArrayList<File>();
 
         for(String path : paths)
@@ -64,10 +80,70 @@ class Migration
         };
 
         sqlScriptObjects.addAll(sqlScriptObjectsTemp);
-
-
+        convertVersionSeparator(sqlScriptObjectsTemp);
 
         return sqlScriptObjects;
+    }
+
+    protected void doMigration() throws SQLMigrationException {
+        List<SQLScriptObject> sqlScriptObjects = null;
+        try
+        {
+            sqlScriptObjects = this.searchSQLScripts(urlPath, prefixes, false);
+        }
+        catch (IOException e)
+        {
+            throw new SQLMigrationException(e.getMessage(), e.getCause());
+        }
+
+        if(sqlScriptObjects == null)
+            return;
+
+        //cache all migrations to run checks on them
+        MigrationRepository.createMigrationTableIfNotExist(schemaWithTabel);
+        List<MigrationObject> allMigrations = MigrationRepository.getAllMigrations(schemaWithTabel);
+
+        for(SQLScriptObject sqlScriptObj : sqlScriptObjects)
+        {
+            String completeScriptName = sqlScriptObj.getVersion().replace(internalVersionSeparator, versionSeparator) + versionFileNameSeparator + sqlScriptObj.getName();
+            log.info("");
+            log.info("started sqlmigration " + completeScriptName);
+
+            //Add if missing
+            this.addMigrationEntry(sqlScriptObj);
+
+            //check hash
+            MigrationObject migration = MigrationRepository.getMigrationByVersion(sqlScriptObj, schemaWithTabel);
+            if(!sqlScriptObj.getHash().equals(migration.getHash()))
+                throw new SQLMigrationException(
+                        "\nfailed to apply migration: "+completeScriptName+ "\n " +
+                                "missmatch between allready applied version and current migration \n" +
+                                " applied migration -> (hash:"+ migration.getHash() +") \n" +
+                                " current migration -> (hash:"+ sqlScriptObj.getHash()+")");
+
+            if(migration.didRun() == false)
+            {
+                try
+                {
+                    PersistenceManager.get().execute(sqlScriptObj.getSqlScript());
+                }
+                catch (BadSqlGrammarException exc)
+                {
+                    throw new SQLMigrationException("\n"+exc.getSQLException().getMessage());
+                }
+
+                migration.setDidRun(true);
+                MigrationRepository.updateMigration(migration, schemaWithTabel);
+                log.info("applied migration");
+            }
+            else
+            {
+                log.info("nothing to migrate");
+            }
+
+            log.info("ended sqlmigration: " + completeScriptName);
+        }
+        log.info("");
     }
 
     private void runSyntaxCheck(List<SQLScriptObject> sqlScriptObjects) throws SQLMigrationException
@@ -87,6 +163,14 @@ class Migration
                 throw new SQLMigrationException("\nbad syntax in your sqlmigration filename: " + sqlScriptObject.getVersion()+versionFileNameSeparator+sqlScriptObject.getName() + "\n"+
                 "can not parse the version information");
             }
+        }
+    }
+
+    private void convertVersionSeparator(List<SQLScriptObject> sqlScriptObjects) throws SQLMigrationException
+    {
+        for (SQLScriptObject sqlScriptObject : sqlScriptObjects)
+        {
+            sqlScriptObject.setVersion(sqlScriptObject.getVersion().replace(versionSeparator, internalVersionSeparator));
         }
     }
 
@@ -125,4 +209,9 @@ class Migration
             return 0;
         }
     };
+
+    protected void updateSchema()
+    {
+        schemaWithTabel = schema+"."+migrationTableName;
+    }
 }

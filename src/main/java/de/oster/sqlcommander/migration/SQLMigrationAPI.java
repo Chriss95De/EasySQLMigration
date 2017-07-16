@@ -1,5 +1,6 @@
 package de.oster.sqlcommander.migration;
 
+import de.oster.sqlcommander.Connection;
 import de.oster.sqlcommander.migration.exception.SQLMigrationException;
 
 /**
@@ -15,21 +16,7 @@ interface SQLMigrationAPI
 
     public String getSeparator();
 
-    public String getJdbcDriver();
-
-    public void setJdbcDriver(String jdbcDriver);
-
-    public String getJdbcURL();
-
-    public void setJdbcURL(String jdbcURL);
-
-    public String getUser();
-
-    public void setUser(String user);
-
-    public String getPassword();
-
-    public void setPassword(String password);
+    public String getConnection();
 
     public String[] getUrlPath();
 
@@ -38,6 +25,10 @@ interface SQLMigrationAPI
     public String getMigrationTableName();
 
     public void setMigrationTableName(String migrationTableName);
+
+    public String getSchema();
+
+    public void setSchema(String schema);
 
     public String[] getPrefixes();
 

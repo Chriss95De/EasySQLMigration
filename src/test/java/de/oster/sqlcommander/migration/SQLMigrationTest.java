@@ -1,5 +1,8 @@
 package de.oster.sqlcommander.migration;
 
+import de.oster.sqlcommander.EasySQLMigration;
+import de.oster.sqlcommander.migration.exception.SQLMigrationException;
+import org.flywaydb.core.Flyway;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,7 +12,7 @@ import org.junit.Test;
 public class SQLMigrationTest extends CustomTest
 {
     @Test
-    public void migrateSQLScript() throws Exception {
+    public void migrateSQLScript() throws SQLMigrationException {
 
         EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcDriver, CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
         Assert.assertNotNull(sqlMigration);
@@ -20,5 +23,7 @@ public class SQLMigrationTest extends CustomTest
         sqlMigration.setSeparator("_");
 
         sqlMigration.migrate();
+        sqlMigration.migrate();
+
     }
 }

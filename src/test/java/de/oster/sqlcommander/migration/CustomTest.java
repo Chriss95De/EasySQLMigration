@@ -1,5 +1,6 @@
 package de.oster.sqlcommander.migration;
 
+import de.oster.sqlcommander.Connection;
 import org.junit.After;
 import org.junit.Before;
 
@@ -12,11 +13,11 @@ public class CustomTest
 
     @Before
     public void initManagerFactory() throws Exception {
-        PersistenceManager.initEntityManagerFactory(
+        PersistenceManager.initEntityManagerFactory(new Connection(
                 jdbcDriver,
                 jdbcURL,
                 "",
-                "");
+                ""));
 
         PersistenceManager.get().execute("DROP ALL OBJECTS");
     }
