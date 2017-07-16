@@ -105,9 +105,14 @@ class Migration
 
         for(SQLScriptObject sqlScriptObj : sqlScriptObjects)
         {
-            String completeScriptName = sqlScriptObj.getVersion().replace(internalVersionSeparator, versionSeparator) + versionFileNameSeparator + sqlScriptObj.getName();
             log.info("");
-            log.info("started sqlmigration " + completeScriptName);
+            log.info("started sqlmigration " + sqlScriptObj.getName());
+
+            MigrationObject checkMigration = MigrationRepository.getMigrationByVersion(sqlScriptObj, schemaWithTabel);
+            if(checkMigration == null)
+            {
+                MigrationActions.runChecksOnMigration(allMigrations, sqlScriptObj, internalVersionSeparator);
+            }
 
             //Add if missing
             this.addMigrationEntry(sqlScriptObj);
@@ -116,7 +121,7 @@ class Migration
             MigrationObject migration = MigrationRepository.getMigrationByVersion(sqlScriptObj, schemaWithTabel);
             if(!sqlScriptObj.getHash().equals(migration.getHash()))
                 throw new SQLMigrationException(
-                        "\nfailed to apply migration: "+completeScriptName+ "\n " +
+                        "\nfailed to apply migration: "+sqlScriptObj.getName()+ "\n " +
                                 "missmatch between allready applied version and current migration \n" +
                                 " applied migration -> (hash:"+ migration.getHash() +") \n" +
                                 " current migration -> (hash:"+ sqlScriptObj.getHash()+")");
@@ -141,7 +146,7 @@ class Migration
                 log.info("nothing to migrate");
             }
 
-            log.info("ended sqlmigration: " + completeScriptName);
+            log.info("ended sqlmigration: " + sqlScriptObj.getName());
         }
         log.info("");
     }
@@ -178,37 +183,11 @@ class Migration
     {
         public int compare(SQLScriptObject o1, SQLScriptObject o2)
         {
-            return determineOrder(o1.getVersion(), o2.getVersion());
-        }
-
-        /***
-         * smallest value is the lowest
-         * @return order value , the lower the earlier in the order
-         */
-        private int determineOrder(String version, String version2) {
-            String numbers[] = version.split(versionSeparator);
-            String numbers2[] = version2.split(versionSeparator);
-
-            for (int i = 0; i < numbers.length; i++) {
-                if (numbers2.length < i)
-                    return -1; //version 1 wins
-
-
-                int value1 = Integer.parseInt(numbers[i]);
-                int value2 = Integer.parseInt(numbers2[i]);
-
-                if (value1 < value2)
-                    return -1;
-                else if (value1 > value2)
-                    return 1;
-
-                if (numbers.length < i + 1)
-                    return 1;
-            }
-
-            return 0;
+            return MigrationActions.determineOrder(o1.getVersion(), o2.getVersion(), versionSeparator);
         }
     };
+
+
 
     protected void updateSchema()
     {

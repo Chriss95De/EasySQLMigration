@@ -81,7 +81,7 @@ class SQLScriptObject
                     "seperator -> " + separator  + " not found");
 
         SQLScriptObject sqlScriptObject = new SQLScriptObject(
-                file.getName().substring(lastOcc+1, file.getName().length()),
+                file.getName(),
                 file.getName().substring(0, lastOcc),
                 HashGenerator.getHash(file),
                 file);
