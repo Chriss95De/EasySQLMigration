@@ -2,12 +2,6 @@ package de.oster.sqlcommander.migration;
 
 import de.oster.sqlcommander.Connection;
 import de.oster.sqlcommander.migration.exception.SQLMigrationException;
-import org.apache.log4j.Logger;
-import org.springframework.jdbc.BadSqlGrammarException;
-
-import java.io.IOException;
-import java.util.List;
-
 /**
  * Created by Christian on 12.07.2017.
  */
@@ -27,7 +21,9 @@ public class SQLMigration extends Migration implements SQLMigrationAPI
 
     public void migrate() throws SQLMigrationException
     {
+        log.info("---started migration---");
         this.doMigration();
+        log.info("---ended migration---");
     }
 
     //GET SET

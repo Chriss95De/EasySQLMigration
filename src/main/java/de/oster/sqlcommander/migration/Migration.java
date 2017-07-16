@@ -15,7 +15,7 @@ import java.util.*;
  */
 class Migration
 {
-    private static Logger log = Logger.getRootLogger();
+    protected static Logger log = Logger.getRootLogger();
 
     //JDBC Information
     Connection connection;
