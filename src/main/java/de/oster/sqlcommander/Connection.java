@@ -5,7 +5,6 @@ package de.oster.sqlcommander;
  */
 public class Connection
 {
-    private String jdbcDriver;
     private String jdbcURL;
     private String user;
     private String password;
@@ -13,19 +12,10 @@ public class Connection
     public Connection() {
     }
 
-    public Connection(String jdbcDriver, String jdbcURL, String user, String password) {
-        this.jdbcDriver = jdbcDriver;
+    public Connection(String jdbcURL, String user, String password) {
         this.jdbcURL = jdbcURL;
         this.user = user;
         this.password = password;
-    }
-
-    public String getJdbcDriver() {
-        return jdbcDriver;
-    }
-
-    public void setJdbcDriver(String jdbcDriver) {
-        this.jdbcDriver = jdbcDriver;
     }
 
     public String getJdbcURL() {

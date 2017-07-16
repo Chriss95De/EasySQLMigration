@@ -17,7 +17,7 @@ public class SQLMigrationTest extends CustomTest
     @Test
     public void migrateSQLScript() throws SQLMigrationException, IOException {
 
-        EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcDriver, CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
+        EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
         Assert.assertNotNull(sqlMigration);
 
         sqlMigration.setSQLScripts("./sql");
@@ -38,7 +38,7 @@ public class SQLMigrationTest extends CustomTest
     @Test
     public void lowerVersionThenAppliedTest() throws SQLMigrationException, IOException {
 
-        EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcDriver, CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
+        EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
         Assert.assertNotNull(sqlMigration);
 
         sqlMigration.setSQLScripts("./sql");

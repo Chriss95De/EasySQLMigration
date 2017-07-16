@@ -14,7 +14,6 @@ public class CustomTest
     @Before
     public void initManagerFactory() throws Exception {
         PersistenceManager.initEntityManagerFactory(new Connection(
-                jdbcDriver,
                 jdbcURL,
                 "",
                 ""));

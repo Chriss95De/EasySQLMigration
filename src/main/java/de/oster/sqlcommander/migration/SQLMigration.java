@@ -7,9 +7,9 @@ import de.oster.sqlcommander.migration.exception.SQLMigrationException;
  */
 public class SQLMigration extends Migration implements SQLMigrationAPI
 {
-    public SQLMigration(String jdbcDriver, String jdbcURL, String user, String password)
+    public SQLMigration(String jdbcURL, String user, String password)
     {
-        this.connection = new Connection(jdbcDriver, jdbcURL, user, password);
+        this.connection = new Connection(jdbcURL, user, password);
         PersistenceManager.initEntityManagerFactory(connection);
     }
 

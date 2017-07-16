@@ -7,6 +7,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 
 import java.sql.Driver;
+import java.sql.DriverManager;
 
 /**
  * Created by Christian on 12.07.2017.
@@ -20,8 +21,7 @@ class PersistenceManager
         DataSource ds = null;
         try
         {
-            ds = new SimpleDriverDataSource((Driver)Class.forName(
-                    connection.getJdbcDriver()).newInstance(),
+            ds = new SimpleDriverDataSource(DriverManager.getDriver(connection.getJdbcURL()),
                     connection.getJdbcURL(),
                     connection.getUser(),
                     connection.getPassword());

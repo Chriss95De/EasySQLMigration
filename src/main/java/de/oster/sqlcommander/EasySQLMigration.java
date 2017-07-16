@@ -8,8 +8,8 @@ import de.oster.sqlcommander.migration.exception.SQLMigrationException;
  */
 public class EasySQLMigration extends SQLMigration
 {
-    public EasySQLMigration(String jdbcDriver, String jdbcURL, String user, String password) {
-        super(jdbcDriver, jdbcURL, user, password);
+    public EasySQLMigration(String jdbcURL, String user, String password) {
+        super(jdbcURL, user, password);
     }
 
     public EasySQLMigration(Connection connection) throws SQLMigrationException {
