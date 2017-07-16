@@ -1,6 +1,6 @@
 # EasySQLMigration
 
-EasySQLMigration sqlMigration = new EasySQLMigration("JDBC-Driverclass", "JDBC-URL", "User", "Password");  
+EasySQLMigration sqlMigration = new EasySQLMigration("JDBC-URL", "User", "Password");  
 sqlMigration.setSQLScripts("/folderToSql/");  
 sqlMigration.setMigrationTableName("migration_tableName");  
 sqlMigration.setPrefixes("sql");  
