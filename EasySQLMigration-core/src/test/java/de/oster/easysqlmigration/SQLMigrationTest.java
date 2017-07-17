@@ -1,6 +1,7 @@
-package de.oster.easysqlmigration.migration;
+package de.oster.easysqlmigration;
 
 import de.oster.easysqlmigration.EasySQLMigration;
+import de.oster.easysqlmigration.migration.CustomTest;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class SQLMigrationTest extends CustomTest
         EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
         Assert.assertNotNull(sqlMigration);
 
-        sqlMigration.setSQLScripts("./sql");
+        sqlMigration.setSQLScripts("../sql");
 
         sqlMigration.migrate();
     }
@@ -30,12 +31,12 @@ public class SQLMigrationTest extends CustomTest
         EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
         Assert.assertNotNull(sqlMigration);
 
-        sqlMigration.setSQLScripts("./sql");
+        sqlMigration.setSQLScripts("../sql");
         sqlMigration.setMigrationTableName("custom_migration");
         sqlMigration.setPrefixes("sql");
         sqlMigration.setSeparator("_");
 
-        File file = new File("./sql/2_1_test.sql");
+        File file = new File("../sql/2_1_test.sql");
         file.delete();
 
         sqlMigration.migrate();
