@@ -1,7 +1,7 @@
-package de.oster.sqlcommander;
+package de.oster.easysqlmigration;
 
-import de.oster.sqlcommander.migration.SQLMigration;
-import de.oster.sqlcommander.migration.exception.SQLMigrationException;
+import de.oster.easysqlmigration.migration.SQLMigration;
+import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 
 /**
  * Created by Christian on 15.07.2017.

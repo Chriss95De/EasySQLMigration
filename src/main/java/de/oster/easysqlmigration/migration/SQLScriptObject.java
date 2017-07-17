@@ -1,7 +1,7 @@
-package de.oster.sqlcommander.migration;
+package de.oster.easysqlmigration.migration;
 
-import de.oster.sqlcommander.migration.exception.SQLMigrationException;
-import de.oster.sqlcommander.migration.util.HashGenerator;
+import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
+import de.oster.easysqlmigration.migration.util.HashGenerator;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;

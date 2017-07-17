@@ -1,12 +1,11 @@
-package de.oster.sqlcommander.migration;
+package de.oster.easysqlmigration.migration;
 
-import de.oster.sqlcommander.Connection;
+import de.oster.easysqlmigration.Connection;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
-import java.sql.Driver;
 import java.sql.DriverManager;
 
 /**

@@ -1,4 +1,4 @@
-package de.oster.sqlcommander;
+package de.oster.easysqlmigration;
 
 /**
  * Created by Christian on 15.07.2017.

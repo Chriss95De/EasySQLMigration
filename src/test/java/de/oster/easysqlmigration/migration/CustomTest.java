@@ -1,6 +1,6 @@
-package de.oster.sqlcommander.migration;
+package de.oster.easysqlmigration.migration;
 
-import de.oster.sqlcommander.Connection;
+import de.oster.easysqlmigration.Connection;
 import org.junit.After;
 import org.junit.Before;
 

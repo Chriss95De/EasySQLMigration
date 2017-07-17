@@ -1,8 +1,7 @@
-package de.oster.sqlcommander.migration;
+package de.oster.easysqlmigration.migration;
 
-import de.oster.sqlcommander.EasySQLMigration;
-import de.oster.sqlcommander.migration.exception.SQLMigrationException;
-import org.flywaydb.core.Flyway;
+import de.oster.easysqlmigration.EasySQLMigration;
+import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,18 +20,8 @@ public class SQLMigrationTest extends CustomTest
         Assert.assertNotNull(sqlMigration);
 
         sqlMigration.setSQLScripts("./sql");
-        sqlMigration.setMigrationTableName("custom_migration");
-        sqlMigration.setPrefixes("sql");
-        sqlMigration.setSeparator("_");
 
         sqlMigration.migrate();
-
-        File file = new File("./sql/2_1_test.sql");
-        file.createNewFile();
-
-        sqlMigration.migrate();
-
-        file.deleteOnExit();
     }
 
     @Test

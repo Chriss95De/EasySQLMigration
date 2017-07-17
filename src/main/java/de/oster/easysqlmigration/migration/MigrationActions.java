@@ -1,10 +1,8 @@
-package de.oster.sqlcommander.migration;
+package de.oster.easysqlmigration.migration;
 
-import de.oster.sqlcommander.migration.exception.SQLMigrationException;
+import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**

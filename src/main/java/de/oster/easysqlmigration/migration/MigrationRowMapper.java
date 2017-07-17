@@ -1,4 +1,4 @@
-package de.oster.sqlcommander.migration;
+package de.oster.easysqlmigration.migration;
 
 import org.springframework.jdbc.core.RowMapper;
 

@@ -1,7 +1,7 @@
-package de.oster.sqlcommander.migration;
+package de.oster.easysqlmigration.migration;
 
-import de.oster.sqlcommander.Connection;
-import de.oster.sqlcommander.migration.exception.SQLMigrationException;
+import de.oster.easysqlmigration.Connection;
+import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.BadSqlGrammarException;
@@ -48,6 +48,9 @@ class Migration
 
     protected List<SQLScriptObject> searchSQLScripts(String[] paths, String[] prefixes, boolean recursive) throws IOException, SQLMigrationException {
         List<File> files = new ArrayList<File>();
+
+        if(paths == null)
+            return new ArrayList<SQLScriptObject>();
 
         for(String path : paths)
         {

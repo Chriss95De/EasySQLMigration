@@ -1,4 +1,4 @@
-package de.oster.sqlcommander.migration.exception;
+package de.oster.easysqlmigration.migration.exception;
 
 /**
  * Created by Christian on 12.07.2017.
