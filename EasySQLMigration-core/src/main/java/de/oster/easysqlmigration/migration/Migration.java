@@ -1,14 +1,19 @@
 package de.oster.easysqlmigration.migration;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import de.oster.easysqlmigration.Connection;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.BadSqlGrammarException;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by Christian on 12.07.2017.
@@ -16,6 +21,7 @@ import java.util.*;
 class Migration
 {
     protected static Logger log = Logger.getRootLogger();
+    private final ClassLoader classLoader;
 
     //JDBC Information
     Connection connection;
@@ -34,6 +40,16 @@ class Migration
     protected String schemaWithTabel = schema+"."+migrationTableName;
 
 
+    public Migration()
+    {
+        this.classLoader = getClass().getClassLoader();
+    }
+
+    public Migration(ClassLoader classLoader)
+    {
+        this.classLoader = classLoader;
+    }
+
     protected void addMigrationEntry(SQLScriptObject sqlScriptObj) {
 
         //create the sqlmigration
@@ -46,19 +62,22 @@ class Migration
         }
     }
 
-    protected List<SQLScriptObject> searchSQLScripts(String[] paths, String[] prefixes, boolean recursive) throws IOException, SQLMigrationException {
-        List<File> files = new ArrayList<File>();
+    protected List<SQLScriptObject> searchSQLScripts(String[] paths, final String[] prefixes, boolean recursive)
+          throws IOException, SQLMigrationException
+
+    {
+        List<String> files = new ArrayList<String>();
 
         if(paths == null)
             return new ArrayList<SQLScriptObject>();
 
         for(String path : paths)
         {
-            files.addAll(FileUtils.listFiles(new File(path), prefixes, recursive));
+            files.addAll(getResourceFiles(path));
         }
 
         List<SQLScriptObject> sqlScriptObjectsTemp = new ArrayList<SQLScriptObject>();
-        for(File file : files)
+        for(String file : files)
             sqlScriptObjectsTemp.add(SQLScriptObject.createFromFile(versionFileNameSeparator, file));
 
         runSyntaxCheck(sqlScriptObjectsTemp);
@@ -168,7 +187,7 @@ class Migration
             }
             catch (NumberFormatException exc)
             {
-                throw new SQLMigrationException("\nbad syntax in your sqlmigration filename: " + sqlScriptObject.getVersion()+versionFileNameSeparator+sqlScriptObject.getName() + "\n"+
+                throw new SQLMigrationException("\nbad syntax in your sqlmigration filename: " + sqlScriptObject.getName() + "\n"+
                 "can not parse the version information");
             }
         }
@@ -191,6 +210,33 @@ class Migration
     };
 
 
+    private List<String> getResourceFiles( String path ) throws IOException {
+        List<String> filenames = new ArrayList<>();
+
+        try (
+              InputStream in = getResourceAsStream( path );
+              BufferedReader br = new BufferedReader( new InputStreamReader( in ) ) ) {
+            String resource;
+
+            while( (resource = br.readLine()) != null ) {
+                if(!path.equals("/"+resource))
+                    filenames.add( path+"/"+resource );
+            }
+        }
+
+        return filenames;
+    }
+
+    private InputStream getResourceAsStream( String resource ) {
+        final InputStream in
+              = getContextClassLoader().getResourceAsStream( resource );
+
+        return in == null ? getClass().getResourceAsStream( resource ) : in;
+    }
+
+    private ClassLoader getContextClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
 
     protected void updateSchema()
     {

@@ -60,6 +60,7 @@ public class SQLMigration extends Migration implements SQLMigrationAPI
 
     public void setMigrationTableName(String migrationTableName) {
         this.migrationTableName = migrationTableName;
+        this.updateSchema();
     }
 
     public String getSchema() {

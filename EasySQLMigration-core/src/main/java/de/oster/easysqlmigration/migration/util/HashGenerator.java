@@ -1,9 +1,5 @@
 package de.oster.easysqlmigration.migration.util;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.CRC32;
@@ -13,10 +9,9 @@ import java.util.zip.CRC32;
  */
 public class HashGenerator
 {
-    public static String getHash(File file) throws IOException {
+    public static String getHash(InputStream in) throws IOException {
 
         CRC32 crcMaker = new CRC32();
-        InputStream in = new FileInputStream(file);
         byte[] buffer = new byte[1024];
         int bytesRead;
         while((bytesRead = in.read(buffer)) != -1) {

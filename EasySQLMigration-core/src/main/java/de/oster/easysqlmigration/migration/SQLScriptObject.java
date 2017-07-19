@@ -1,11 +1,11 @@
 package de.oster.easysqlmigration.migration;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import de.oster.easysqlmigration.migration.util.HashGenerator;
-import org.apache.commons.io.FileUtils;
-
-import java.io.*;
-import java.nio.charset.Charset;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Created by Christian on 12.07.2017.
@@ -25,11 +25,11 @@ class SQLScriptObject
     public SQLScriptObject() {
     }
 
-    public SQLScriptObject(String name, String version, String hash, File sqlFile) throws IOException {
+    public SQLScriptObject(String name, String version, String sqlFile) throws IOException {
         this.name = name;
         this.version = version;
-        this.hash = hash;
-        this.sqlScript = FileUtils.readFileToString(sqlFile, Charset.defaultCharset());
+        this.hash = HashGenerator.getHash(this.getClass().getResourceAsStream(sqlFile));
+        this.sqlScript = IOUtils.toString(this.getClass().getResourceAsStream(sqlFile), Charset.defaultCharset());
     }
 
     public String getName() {
@@ -72,18 +72,19 @@ class SQLScriptObject
         this.sqlScript = sqlScript;
     }
 
-    public static SQLScriptObject createFromFile(String separator, File file) throws IOException, SQLMigrationException {
+    public static SQLScriptObject createFromFile(String separator, String file) throws IOException, SQLMigrationException {
 
-        int lastOcc = file.getName().lastIndexOf(separator);
+        String name = file.substring(file.lastIndexOf("/")+1, file.length());
+
+        int lastOcc = name.lastIndexOf(separator);
 
         if(lastOcc == -1)
-            throw new SQLMigrationException("\nbad syntax in your sqlmigration filename: " + file.getName() + "\n"+
+            throw new SQLMigrationException("\nbad syntax in your sqlmigration filename: " + name + "\n"+
                     "seperator -> " + separator  + " not found");
 
         SQLScriptObject sqlScriptObject = new SQLScriptObject(
-                file.getName(),
-                file.getName().substring(0, lastOcc),
-                HashGenerator.getHash(file),
+                name,
+                name.substring(0, lastOcc),
                 file);
 
         return sqlScriptObject;

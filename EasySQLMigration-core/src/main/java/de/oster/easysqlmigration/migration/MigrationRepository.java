@@ -1,11 +1,11 @@
 package de.oster.easysqlmigration.migration;
 
 
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowMapperResultSetExtractor;
-
 import java.sql.Timestamp;
 import java.util.List;
+
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 /**
  * Created by Christian on 13.07.2017.
@@ -31,7 +31,7 @@ class MigrationRepository
                 "'"+sqlScriptObject.getName()       +"', " +
                 "'"+sqlScriptObject.getHash()       +"', " +
                 "'"+sqlScriptObject.didRun()       +"', " +
-                "'"+new Timestamp(System.currentTimeMillis()) +"', " +
+                "'"+new Timestamp(System.currentTimeMillis()) +"'" +
                 ");");
     }
 
