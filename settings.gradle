@@ -1,4 +1,3 @@
-rootProject.name = 'OsterSQLCommander'
-include 'EasySQLMigration-GradlePlugin'
+rootProject.name = 'EasySQLMigration'
 include 'EasySQLMigration-core'
 
