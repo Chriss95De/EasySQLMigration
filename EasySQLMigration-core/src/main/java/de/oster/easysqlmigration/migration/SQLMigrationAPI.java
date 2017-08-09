@@ -2,6 +2,8 @@ package de.oster.easysqlmigration.migration;
 
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 
+import java.util.List;
+
 /**
  * Created by Christian on 15.07.2017.
  */
@@ -32,4 +34,6 @@ interface SQLMigrationAPI
     public String[] getPrefixes();
 
     public void setPrefixes(String... prefixes);
+
+    public List<Migration> retriveMigrationInfo();
 }

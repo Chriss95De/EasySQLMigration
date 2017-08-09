@@ -2,10 +2,13 @@ package de.oster.easysqlmigration.migration;
 
 import de.oster.easysqlmigration.Connection;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
+
+import java.util.List;
+
 /**
  * Created by Christian on 12.07.2017.
  */
-public class SQLMigration extends Migration implements SQLMigrationAPI
+public class SQLMigration extends MigrationImpl implements SQLMigrationAPI
 {
     public SQLMigration(String jdbcURL, String user, String password)
     {
@@ -82,5 +85,10 @@ public class SQLMigration extends Migration implements SQLMigrationAPI
      */
     public void setPrefixes(String... prefixes) {
         this.prefixes = prefixes;
+    }
+
+    @Override
+    public List<Migration> retriveMigrationInfo() {
+        return this.getRunnedMigrations();
     }
 }

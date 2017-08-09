@@ -12,6 +12,7 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
+    //h2
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'
 
     //JDBC Template

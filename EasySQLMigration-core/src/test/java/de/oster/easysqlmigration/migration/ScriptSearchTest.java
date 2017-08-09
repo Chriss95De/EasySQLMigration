@@ -14,7 +14,7 @@ public class ScriptSearchTest
 {
     @Test
     public void searchSQLScriptTest() throws IOException, SQLMigrationException {
-        Migration migration = new Migration();
+        MigrationImpl migration = new MigrationImpl();
         List<SQLScriptObject> sqlMigrationList = migration.searchSQLScripts(new String[]{"/sql/"}, null, false);
 
         Assert.assertNotNull(sqlMigrationList);

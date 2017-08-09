@@ -1,12 +1,12 @@
 package de.oster.easysqlmigration;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import de.oster.easysqlmigration.migration.CustomTest;
+import de.oster.easysqlmigration.migration.Migration;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -25,31 +25,22 @@ public class SQLMigrationTest extends CustomTest
         sqlMigration.migrate();
     }
 
-    public void lowerVersionThenAppliedTest() throws SQLMigrationException, IOException {
-
+    @Test
+    public void retrieveMetricInfo() throws SQLMigrationException {
         EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
         Assert.assertNotNull(sqlMigration);
 
         sqlMigration.setSQLScripts("/sql");
-        sqlMigration.setMigrationTableName("custom_migration");
-        sqlMigration.setPrefixes("sql");
-        sqlMigration.setSeparator("_");
-
-        File file = new File("/sql/2_1_test.sql");
-        file.delete();
 
         sqlMigration.migrate();
 
-        file.createNewFile();
-
-        try {
-            sqlMigration.migrate();
-        }
-        catch (Exception exc)
+        List<Migration> migrations = sqlMigration.retriveMigrationInfo();
+        for (Migration migration : migrations)
         {
-            Assert.assertNotNull(exc);
+            System.out.println("Applied migrations: " + migration.getName());
+            Assert.assertNotNull(migration.getCreated());
+            Assert.assertNotNull(migration.getHash());
+            Assert.assertNotNull(migration.getClass());
         }
-
-        file.deleteOnExit();
     }
 }

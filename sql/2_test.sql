@@ -1,1 +1,0 @@
-CREATE TABLE blub6(wasd varchar(255));

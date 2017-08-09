@@ -2,7 +2,7 @@ package de.oster.easysqlmigration.migration;
 
 import java.util.Date;
 
-class MigrationObject
+class MigrationObject implements Migration
 {
     private String version;
 
