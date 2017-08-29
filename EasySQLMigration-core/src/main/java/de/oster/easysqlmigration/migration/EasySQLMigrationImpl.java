@@ -18,7 +18,7 @@ import org.springframework.jdbc.BadSqlGrammarException;
 /**
  * Created by Christian on 12.07.2017.
  */
-class MigrationImpl
+class EasySQLMigrationImpl
 {
     protected static Logger log = Logger.getRootLogger();
     private final ClassLoader classLoader;
@@ -40,12 +40,12 @@ class MigrationImpl
     protected String schemaWithTabel = schema+"."+migrationTableName;
 
 
-    public MigrationImpl()
+    public EasySQLMigrationImpl()
     {
         this.classLoader = getClass().getClassLoader();
     }
 
-    public MigrationImpl(ClassLoader classLoader)
+    public EasySQLMigrationImpl(ClassLoader classLoader)
     {
         this.classLoader = classLoader;
     }
@@ -108,6 +108,11 @@ class MigrationImpl
     }
 
     protected void doMigration() throws SQLMigrationException {
+
+        log.info("---started migration---");
+
+        Long startTime = System.currentTimeMillis();
+
         List<SQLScriptObject> sqlScriptObjects = null;
         try
         {
@@ -170,6 +175,11 @@ class MigrationImpl
 
             log.info("ended sqlmigration: " + sqlScriptObj.getName());
         }
+
+        log.info("");
+        log.info("---ended migration---");
+        log.info("");
+        log.info("EasySQLMigration took " + String.valueOf((System.currentTimeMillis()-startTime)/60) + " seconds.");
         log.info("");
     }
 

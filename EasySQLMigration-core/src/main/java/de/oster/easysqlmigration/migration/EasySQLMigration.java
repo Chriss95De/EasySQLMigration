@@ -9,13 +9,13 @@ import java.util.List;
 /**
  * Created by Christian on 12.07.2017.
  */
-public class SQLMigration extends MigrationImpl implements SQLMigrationAPI
+public class EasySQLMigration extends EasySQLMigrationImpl implements SQLMigrationAPI
 {
 
     /**
      * @throws SQLConnectionException if there is something wrong with your jdbc connection
      */
-    public SQLMigration(String jdbcURL, String user, String password)
+    public EasySQLMigration(String jdbcURL, String user, String password)
     {
         this.connection = new Connection(jdbcURL, user, password);
         PersistenceManager.initEntityManagerFactory(connection);
@@ -23,7 +23,7 @@ public class SQLMigration extends MigrationImpl implements SQLMigrationAPI
     /**
      * @throws SQLConnectionException if there is something wrong with your jdbc connection
      */
-    public SQLMigration(Connection connection)
+    public EasySQLMigration(Connection connection)
     {
         this.connection = connection;
         PersistenceManager.initEntityManagerFactory(connection);
@@ -41,9 +41,7 @@ public class SQLMigration extends MigrationImpl implements SQLMigrationAPI
      */
     public void migrate()
     {
-        log.info("---started migration---");
         this.doMigration();
-        log.info("---ended migration---");
     }
 
     //GET SET
