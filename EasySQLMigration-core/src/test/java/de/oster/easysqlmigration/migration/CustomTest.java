@@ -1,8 +1,10 @@
 package de.oster.easysqlmigration.migration;
 
 import de.oster.easysqlmigration.Connection;
+import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import org.junit.After;
 import org.junit.Before;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 
 public class CustomTest
 {
@@ -12,17 +14,31 @@ public class CustomTest
 
     @Before
     public void initManagerFactory() throws Exception {
-        PersistenceManager.initEntityManagerFactory(new Connection(
-                jdbcURL,
-                user,
-                password));
+        try
+        {
+            PersistenceManager.initEntityManagerFactory(new Connection(
+                    jdbcURL,
+                    user,
+                    password));
 
-        PersistenceManager.get().execute("DROP ALL OBJECTS");
+            PersistenceManager.get().execute("DROP ALL OBJECTS");
+        }
+        catch (CannotGetJdbcConnectionException exc)
+        {
+           //silent exception, because some test need to get behind here
+        }
     }
 
     @After
     public void cleanUp()
     {
-        PersistenceManager.get().execute("DROP ALL OBJECTS");
+        try
+        {
+            PersistenceManager.get().execute("DROP ALL OBJECTS");
+        }
+        catch (CannotGetJdbcConnectionException exc)
+        {
+            //silent exception, because some test need to get behind here
+        }
     }
 }

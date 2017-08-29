@@ -5,6 +5,7 @@ import java.util.List;
 import de.oster.easysqlmigration.migration.CustomTest;
 import de.oster.easysqlmigration.migration.Migration;
 import de.oster.easysqlmigration.migration.EasySQLMigration;
+import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,5 +50,42 @@ public class SQLMigrationTest extends CustomTest
     {
         for(int i=0; i<= 20; i++)
             migrateSQLScript();
+    }
+
+    @Test
+    public void migrateSQLScriptExceptionTest() {
+
+        EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
+
+        //folder to sql scripts that are broken
+        sqlMigration.setSQLScripts("/brokensql");
+
+        boolean failed = false;
+        try
+        {
+            sqlMigration.migrate();
+        }
+        catch (SQLMigrationException e)
+        {
+            System.out.println(e.getMessage());
+            failed = true;
+        }
+
+        Assert.assertTrue(failed);
+    }
+
+    @Test
+    public void createJDBCConnectionExceptionTest() {
+        boolean failed = false;
+        try
+        {
+            EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcURL, CustomTest.user + "definitlywrongusernow", CustomTest.password);
+        }
+        catch (SQLConnectionException exc)
+        {
+            System.out.println(exc.getMessage());
+            failed = true;
+        }
+        Assert.assertTrue(failed);
     }
 }

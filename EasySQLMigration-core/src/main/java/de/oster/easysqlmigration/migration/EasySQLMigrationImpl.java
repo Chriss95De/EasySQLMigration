@@ -11,9 +11,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.oster.easysqlmigration.Connection;
+import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.jdbc.UncategorizedSQLException;
 
 /**
  * Created by Christian on 12.07.2017.
@@ -162,6 +165,14 @@ class EasySQLMigrationImpl
                 catch (BadSqlGrammarException exc)
                 {
                     throw new SQLMigrationException("\n"+sqlScriptObj.getName()+": "+exc.getSQLException().getMessage());
+                }
+                catch (UncategorizedSQLException exc)
+                {
+                    throw new SQLMigrationException(exc.getSQLException().getMessage(), migration);
+                }
+                catch (CannotGetJdbcConnectionException exc)
+                {
+                    throw new SQLConnectionException("could not create jdbc connection", exc.getCause());
                 }
 
                 migration.setDidRun(true);

@@ -17,7 +17,16 @@ public class SQLMigrationException extends RuntimeException
         super(reason, cause);
     }
 
-    public SQLMigrationException(String reason, Migration migration) {
-        super(reason);
+    public SQLMigrationException(String reason, Migration migration)
+    {
+        String errorMessage = "";
+        errorMessage += "\n";
+        errorMessage += "Their occurred an error in " + migration.getName();
+        errorMessage += "\n";
+        errorMessage += "error message:";
+        errorMessage += "\n";
+        errorMessage += "\n";
+        errorMessage += reason;
+        throw new SQLMigrationException(errorMessage);
     }
 }

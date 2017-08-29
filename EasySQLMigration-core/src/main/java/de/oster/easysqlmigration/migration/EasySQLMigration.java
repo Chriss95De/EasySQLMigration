@@ -38,6 +38,8 @@ public class EasySQLMigration extends EasySQLMigrationImpl implements SQLMigrati
      *
      * @throws java.io.IOException if the given path cant be accessed
      *
+     * @throws SQLConnectionException if there is something wrong with your jdbc connection
+     *
      */
     public void migrate()
     {

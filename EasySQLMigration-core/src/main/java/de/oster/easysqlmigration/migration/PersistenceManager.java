@@ -2,6 +2,7 @@ package de.oster.easysqlmigration.migration;
 
 import de.oster.easysqlmigration.Connection;
 import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -32,7 +33,15 @@ class PersistenceManager
         }
 
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcTemplate.execute("SELECT 1");
+
+        try
+        {
+            jdbcTemplate.execute("SELECT 1");
+        }
+        catch (CannotGetJdbcConnectionException exc)
+        {
+            throw new SQLConnectionException("could not create jdbc connection \nerror message:\n" + exc.getCause().getMessage());
+        }
     }
 
     public static JdbcTemplate get()
