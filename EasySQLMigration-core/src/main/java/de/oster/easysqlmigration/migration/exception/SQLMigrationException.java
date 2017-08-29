@@ -5,7 +5,7 @@ import java.sql.SQLException;
 /**
  * Created by Christian on 12.07.2017.
  */
-public class SQLMigrationException extends SQLException
+public class SQLMigrationException extends RuntimeException
 {
     public SQLMigrationException(String reason) {
         super(reason);

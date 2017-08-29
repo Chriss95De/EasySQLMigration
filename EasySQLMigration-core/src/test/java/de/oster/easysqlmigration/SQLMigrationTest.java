@@ -15,7 +15,7 @@ import org.junit.Test;
 public class SQLMigrationTest extends CustomTest
 {
     @Test
-    public void migrateSQLScript() throws SQLMigrationException, IOException {
+    public void migrateSQLScript() {
 
         EasySQLMigration sqlMigration = new EasySQLMigration(CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
         Assert.assertNotNull(sqlMigration);
@@ -42,5 +42,12 @@ public class SQLMigrationTest extends CustomTest
             Assert.assertNotNull(migration.getHash());
             Assert.assertNotNull(migration.getClass());
         }
+    }
+
+    @Test
+    public void repeatMigrations()
+    {
+        for(int i=0; i<= 20; i++)
+            migrateSQLScript();
     }
 }

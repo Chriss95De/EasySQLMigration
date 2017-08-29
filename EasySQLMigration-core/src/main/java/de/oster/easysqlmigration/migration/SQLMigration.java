@@ -22,7 +22,17 @@ public class SQLMigration extends MigrationImpl implements SQLMigrationAPI
         PersistenceManager.initEntityManagerFactory(connection);
     }
 
-    public void migrate() throws SQLMigrationException
+    /***
+     * Starts the migration by searching all sql script files that it can find
+     * in the given paths.
+     *
+     * @throws SQLMigrationException jdbc problems, migration miss match or just
+     * a syntax error in your sql script
+     *
+     * @throws java.io.IOException if the given path cant be accessed
+     *
+     */
+    public void migrate()
     {
         log.info("---started migration---");
         this.doMigration();
