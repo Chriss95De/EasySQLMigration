@@ -1,6 +1,7 @@
 package de.oster.easysqlmigration.migration;
 
 import de.oster.easysqlmigration.Connection;
+import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -27,8 +28,7 @@ class PersistenceManager
         }
         catch (Exception exc)
         {
-          exc.printStackTrace();
-          System.exit(1);
+          throw new SQLConnectionException("error while creating the jdbc connection", exc.getCause());
         }
 
         jdbcTemplate = new JdbcTemplate(ds);

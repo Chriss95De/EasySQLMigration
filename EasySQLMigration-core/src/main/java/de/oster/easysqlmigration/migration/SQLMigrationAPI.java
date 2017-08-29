@@ -19,10 +19,6 @@ interface SQLMigrationAPI
 
     public String getConnection();
 
-    public String[] getUrlPath();
-
-    public void setUrlPath(String[] urlPath);
-
     public String getMigrationTableName();
 
     public void setMigrationTableName(String migrationTableName);

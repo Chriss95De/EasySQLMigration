@@ -1,6 +1,7 @@
 package de.oster.easysqlmigration.migration;
 
 import de.oster.easysqlmigration.Connection;
+import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 
 import java.util.List;
@@ -10,19 +11,25 @@ import java.util.List;
  */
 public class SQLMigration extends MigrationImpl implements SQLMigrationAPI
 {
+
+    /**
+     * @throws SQLConnectionException if there is something wrong with your jdbc connection
+     */
     public SQLMigration(String jdbcURL, String user, String password)
     {
         this.connection = new Connection(jdbcURL, user, password);
         PersistenceManager.initEntityManagerFactory(connection);
     }
-
-    public SQLMigration(Connection connection) throws SQLMigrationException
+    /**
+     * @throws SQLConnectionException if there is something wrong with your jdbc connection
+     */
+    public SQLMigration(Connection connection)
     {
         this.connection = connection;
         PersistenceManager.initEntityManagerFactory(connection);
     }
 
-    /***
+    /**
      * Starts the migration by searching all sql script files that it can find
      * in the given paths.
      *
@@ -40,11 +47,22 @@ public class SQLMigration extends MigrationImpl implements SQLMigrationAPI
     }
 
     //GET SET
+
+    /**
+     * Specifies the folders in your resource where the migration should look for your sql scripts
+     * @param folders
+     */
     public void setSQLScripts(String...folders)
     {
         this.urlPath = folders;
     }
 
+    /**
+     * Separates the version in the filename from the actual script name
+     * For example: 1_Init.sql  <- separator = "_"
+     *
+     * @param separator
+     */
     public void setSeparator(String separator)
     {
         this.versionFileNameSeparator = separator;
@@ -59,14 +77,9 @@ public class SQLMigration extends MigrationImpl implements SQLMigrationAPI
         return this.getConnection();
     }
 
-    public String[] getUrlPath() {
-        return urlPath;
-    }
-
-    public void setUrlPath(String[] urlPath) {
-        this.urlPath = urlPath;
-    }
-
+    /**
+     * @return the name of the created table name where all the migrations are stored in
+     */
     public String getMigrationTableName() {
         return migrationTableName;
     }
@@ -80,6 +93,10 @@ public class SQLMigration extends MigrationImpl implements SQLMigrationAPI
         return this.schema;
     }
 
+    /**
+     * Set the schema where your migration table should be created in
+     * @param schema
+     */
     public void setSchema(String schema) {
         this.schema = schema;
         this.updateSchema();
@@ -90,7 +107,10 @@ public class SQLMigration extends MigrationImpl implements SQLMigrationAPI
     }
 
     /**
-     * overrides the default prefix for sql scripts, default -> sql
+     * overrides the default prefix for the filename, default -> sql
+     *
+     * For example: 1_Test.sql <- prefix = "sql"
+     *
      * @param prefixes for example
      */
     public void setPrefixes(String... prefixes) {
