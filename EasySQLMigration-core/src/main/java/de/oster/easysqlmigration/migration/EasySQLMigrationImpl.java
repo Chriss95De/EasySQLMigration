@@ -18,6 +18,8 @@ import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Created by Christian on 12.07.2017.
  */
@@ -27,7 +29,11 @@ class EasySQLMigrationImpl
     private final ClassLoader classLoader;
 
     //JDBC Information
-    Connection connection;
+    protected PersistenceManager persistenceManager;
+    protected Connection connection;
+
+    //Persistence
+    protected MigrationRepository migrationRepository;
 
     protected String[] urlPath;
     protected String[] prefixes = {"sql"};
@@ -48,6 +54,15 @@ class EasySQLMigrationImpl
         this.classLoader = getClass().getClassLoader();
     }
 
+    public void initAll()
+    {
+        this.persistenceManager = new PersistenceManager(connection);
+        this.persistenceManager.registerRepository(new MigrationRepository());
+
+        //repo
+        migrationRepository = (MigrationRepository)persistenceManager.getRepository(MigrationRepository.class);
+    }
+
     public EasySQLMigrationImpl(ClassLoader classLoader)
     {
         this.classLoader = classLoader;
@@ -56,12 +71,12 @@ class EasySQLMigrationImpl
     protected void addMigrationEntry(SQLScriptObject sqlScriptObj) {
 
         //create the sqlmigration
-        MigrationRepository.createMigrationTableIfNotExist(schemaWithTabel);
+        migrationRepository.createMigrationTableIfNotExist(schemaWithTabel);
 
-        MigrationObject migration = MigrationRepository.getMigrationByVersion(sqlScriptObj, schemaWithTabel);
+        MigrationObject migration = migrationRepository.getMigrationByVersion(sqlScriptObj, schemaWithTabel);
         if(migration == null)
         {
-            MigrationRepository.addNewMigration(sqlScriptObj, schemaWithTabel);
+            migrationRepository.addNewMigration(sqlScriptObj, schemaWithTabel);
         }
     }
 
@@ -130,15 +145,15 @@ class EasySQLMigrationImpl
             return;
 
         //cache all migrations to run checks on them
-        MigrationRepository.createMigrationTableIfNotExist(schemaWithTabel);
-        List<MigrationObject> allMigrations = MigrationRepository.getAllMigrations(schemaWithTabel);
+        migrationRepository.createMigrationTableIfNotExist(schemaWithTabel);
+        List<MigrationObject> allMigrations = migrationRepository.getAllMigrations(schemaWithTabel);
 
         for(SQLScriptObject sqlScriptObj : sqlScriptObjects)
         {
             log.info("");
             log.info("started sqlmigration " + sqlScriptObj.getName());
 
-            MigrationObject checkMigration = MigrationRepository.getMigrationByVersion(sqlScriptObj, schemaWithTabel);
+            MigrationObject checkMigration = migrationRepository.getMigrationByVersion(sqlScriptObj, schemaWithTabel);
             if(checkMigration == null)
             {
                 MigrationActions.runChecksOnMigration(allMigrations, sqlScriptObj, internalVersionSeparator);
@@ -148,7 +163,7 @@ class EasySQLMigrationImpl
             this.addMigrationEntry(sqlScriptObj);
 
             //check hash
-            MigrationObject migration = MigrationRepository.getMigrationByVersion(sqlScriptObj, schemaWithTabel);
+            MigrationObject migration = migrationRepository.getMigrationByVersion(sqlScriptObj, schemaWithTabel);
             if(!sqlScriptObj.getHash().equals(migration.getHash()))
                 throw new SQLMigrationException(
                         "\nfailed to apply migration: "+sqlScriptObj.getName()+ "\n " +
@@ -160,7 +175,7 @@ class EasySQLMigrationImpl
             {
                 try
                 {
-                    PersistenceManager.get().execute(sqlScriptObj.getSqlScript());
+                    persistenceManager.get().execute(sqlScriptObj.getSqlScript());
                 }
                 catch (BadSqlGrammarException exc)
                 {
@@ -168,7 +183,7 @@ class EasySQLMigrationImpl
                 }
                 catch (UncategorizedSQLException exc)
                 {
-                    throw new SQLMigrationException(exc.getSQLException().getMessage(), migration);
+                    throw new SQLMigrationException(exc.getSQLException().getMessage(), migration, exc);
                 }
                 catch (CannotGetJdbcConnectionException exc)
                 {
@@ -176,7 +191,7 @@ class EasySQLMigrationImpl
                 }
 
                 migration.setDidRun(true);
-                MigrationRepository.updateMigration(migration, schemaWithTabel);
+                migrationRepository.updateMigration(migration, schemaWithTabel);
                 log.info("applied migration");
             }
             else
@@ -190,7 +205,7 @@ class EasySQLMigrationImpl
         log.info("");
         log.info("---ended migration---");
         log.info("");
-        log.info("EasySQLMigration took " + String.valueOf((System.currentTimeMillis()-startTime)/60) + " seconds.");
+        log.info("createInstance took " + String.valueOf((System.currentTimeMillis()-startTime)/60) + " seconds.");
         log.info("");
     }
 
@@ -266,7 +281,7 @@ class EasySQLMigrationImpl
 
     protected List<Migration> getRunnedMigrations()
     {
-        List<MigrationObject> migrations = MigrationRepository.getAllMigrations(this.schemaWithTabel);
+        List<MigrationObject> migrations = migrationRepository.getAllMigrations(this.schemaWithTabel);
         List<Migration> apiMigrations = new ArrayList<>();
         for (MigrationObject migrationObject : migrations)
             apiMigrations.add(migrationObject);

@@ -5,16 +5,25 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 /**
  * Created by Christian on 13.07.2017.
  */
-class MigrationRepository
-{
-    public static void createMigrationTableIfNotExist(String table)
+class MigrationRepository extends SimpleJDBCRepository {
+
+
+    public MigrationRepository() {
+    }
+
+    public MigrationRepository(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate);
+    }
+
+    public void createMigrationTableIfNotExist(String table)
     {
-        PersistenceManager.get().execute("CREATE TABLE IF NOT EXISTS "+table+" ( " +
+        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS "+table+" ( " +
                 "version varchar(255) NOT NULL, " +
                 "name varchar(255) NOT NULL, " +
                 "hash varchar(255) NOT NULL, " +
@@ -23,9 +32,9 @@ class MigrationRepository
                 ");");
     }
 
-    public static void addNewMigration(SQLScriptObject sqlScriptObject, String table)
+    public void addNewMigration(SQLScriptObject sqlScriptObject, String table)
     {
-        PersistenceManager.get().execute("INSERT INTO "+table+"(version, name, hash, didRun, created) " +
+        jdbcTemplate.execute("INSERT INTO "+table+"(version, name, hash, didRun, created) " +
                 "VALUES( " +
                 "'"+sqlScriptObject.getVersion()    +"', " +
                 "'"+sqlScriptObject.getName()       +"', " +
@@ -35,9 +44,9 @@ class MigrationRepository
                 ");");
     }
 
-    public static void updateMigration(MigrationObject migration, String table)
+    public void updateMigration(MigrationObject migration, String table)
     {
-        PersistenceManager.get().update("UPDATE "+table +
+        jdbcTemplate.update("UPDATE "+table +
                 " SET " +
                 "version = '"+migration.getVersion()    +"', " +
                 "name = '"+migration.getName()       +"', " +
@@ -47,11 +56,11 @@ class MigrationRepository
                 " WHERE version = '"+migration.getVersion()+"';");
     }
 
-    public static MigrationObject getMigrationByVersion(SQLScriptObject sqlScriptObject, String table)
+    public MigrationObject getMigrationByVersion(SQLScriptObject sqlScriptObject, String table)
     {
         try
         {
-            MigrationObject migration = PersistenceManager.get().queryForObject(
+            MigrationObject migration = jdbcTemplate.queryForObject(
                     "SELECT * FROM " + table + " WHERE version = '" + sqlScriptObject.getVersion() + "'",
                     new MigrationRowMapper());
             return migration;
@@ -62,9 +71,9 @@ class MigrationRepository
         }
     }
 
-    public static List<MigrationObject> getAllMigrations(String table)
+    public List<MigrationObject> getAllMigrations(String table)
     {
-        List<MigrationObject> migrationObjects = PersistenceManager.get().query("SELECT * FROM "+table, new RowMapperResultSetExtractor<MigrationObject>(new MigrationRowMapper()));
+        List<MigrationObject> migrationObjects = jdbcTemplate.query("SELECT * FROM "+table, new RowMapperResultSetExtractor<MigrationObject>(new MigrationRowMapper()));
         return migrationObjects;
     }
 }

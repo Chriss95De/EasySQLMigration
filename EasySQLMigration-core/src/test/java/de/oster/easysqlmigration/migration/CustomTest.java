@@ -5,9 +5,15 @@ import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+
+import java.sql.DriverManager;
 
 public class CustomTest
 {
+    private JdbcTemplate jdbcTemplate;
+
     public static String jdbcURL = "jdbc:h2:~/.sqlmigration/h2Test";
     public static String user = "";
     public static String password = "";
@@ -16,12 +22,13 @@ public class CustomTest
     public void initManagerFactory() throws Exception {
         try
         {
-            PersistenceManager.initEntityManagerFactory(new Connection(
-                    jdbcURL,
-                    user,
-                    password));
+             SimpleDriverDataSource ds = new SimpleDriverDataSource(DriverManager.getDriver(jdbcURL),
+                     jdbcURL,
+                     user,
+                     password);
 
-            PersistenceManager.get().execute("DROP ALL OBJECTS");
+            jdbcTemplate = new JdbcTemplate(ds);
+            jdbcTemplate.execute("DROP ALL OBJECTS");
         }
         catch (CannotGetJdbcConnectionException exc)
         {
@@ -34,7 +41,7 @@ public class CustomTest
     {
         try
         {
-            PersistenceManager.get().execute("DROP ALL OBJECTS");
+            jdbcTemplate.execute("DROP ALL OBJECTS");
         }
         catch (CannotGetJdbcConnectionException exc)
         {

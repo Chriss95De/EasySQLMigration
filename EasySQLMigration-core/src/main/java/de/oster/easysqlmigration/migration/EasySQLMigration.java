@@ -15,10 +15,10 @@ public class EasySQLMigration extends EasySQLMigrationImpl implements SQLMigrati
     /**
      * @throws SQLConnectionException if there is something wrong with your jdbc connection
      */
-    public EasySQLMigration(String jdbcURL, String user, String password)
+    public static EasySQLMigration createInstance(String jdbcURL, String user, String password)
     {
-        this.connection = new Connection(jdbcURL, user, password);
-        PersistenceManager.initEntityManagerFactory(connection);
+       Connection connection = new Connection(jdbcURL, user, password);
+       return new EasySQLMigration(connection);
     }
     /**
      * @throws SQLConnectionException if there is something wrong with your jdbc connection
@@ -26,7 +26,16 @@ public class EasySQLMigration extends EasySQLMigrationImpl implements SQLMigrati
     public EasySQLMigration(Connection connection)
     {
         this.connection = connection;
-        PersistenceManager.initEntityManagerFactory(connection);
+        initAll();
+    }
+
+    /**
+     * @throws SQLConnectionException if there is something wrong with your jdbc connection
+     */
+    public EasySQLMigration(String jdbcURL, String user, String password)
+    {
+        this.connection = new Connection(jdbcURL, user, password);
+        initAll();
     }
 
     /**

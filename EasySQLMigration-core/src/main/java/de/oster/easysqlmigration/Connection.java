@@ -9,9 +9,6 @@ public class Connection
     private String user;
     private String password;
 
-    public Connection() {
-    }
-
     public Connection(String jdbcURL, String user, String password) {
         this.jdbcURL = jdbcURL;
         this.user = user;
