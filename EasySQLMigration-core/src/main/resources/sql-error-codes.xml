@@ -88,7 +88,7 @@
                     <property name="exceptionClass" value="de.oster.easysqlmigration.vendors.h2.UnknownDataTypeException" />
                 </bean>
                 <bean id="h2syntaxerror" class="org.springframework.jdbc.support.CustomSQLErrorCodesTranslation">
-                    <property name="errorCodes" value="42001" />
+                    <property name="errorCodes" value="42000,42001,42101,42102,42111,42112,42121,42122,42132" />
                     <property name="exceptionClass" value="de.oster.easysqlmigration.vendors.h2.SyntaxException" />
                 </bean>
             </list>

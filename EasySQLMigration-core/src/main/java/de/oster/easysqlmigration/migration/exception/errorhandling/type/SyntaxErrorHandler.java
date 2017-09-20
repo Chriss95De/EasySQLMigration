@@ -9,6 +9,6 @@ public class SyntaxErrorHandler implements Handler
     @Override
     public void handle(TypedException e, Migration migration)
     {
-        throw new SQLMigrationException("syntax error in "+migration.getName()+"\n"+e.getErrorMessage());
+        throw new SQLMigrationException("\n syntax error in "+migration.getName()+"\n"+e.getErrorMessage()+"\n");
     }
 }
