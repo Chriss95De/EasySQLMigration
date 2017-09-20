@@ -8,11 +8,10 @@ CREATE TABLE Orders (
 CREATE TABLE Persons (
     ID int NOT NULL,
     LastName varchar(255) NOT NULL,
-    FirstName varchar(255),
-    Age int
+    FirstName varchar(255)
 );
 
-CREATE TABLE TestTable (
+CREATE TABLE TestTable ((
     OrderID int NOT NULL,
     OrderNumber int NOT NULL,
     PersonID int,

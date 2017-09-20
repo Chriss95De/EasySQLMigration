@@ -13,7 +13,10 @@ import java.util.List;
 import de.oster.easysqlmigration.Connection;
 import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
+import de.oster.easysqlmigration.migration.exception.errorhandling.ErrorHandler;
+import de.oster.easysqlmigration.vendors.TypedException;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
@@ -61,6 +64,8 @@ class EasySQLMigrationImpl
 
         //repo
         migrationRepository = (MigrationRepository)persistenceManager.getRepository(MigrationRepository.class);
+
+        ErrorHandler errorHandler = new ErrorHandler(this.persistenceManager.getDataSource());
     }
 
     public EasySQLMigrationImpl(ClassLoader classLoader)
@@ -188,6 +193,13 @@ class EasySQLMigrationImpl
                 catch (CannotGetJdbcConnectionException exc)
                 {
                     throw new SQLConnectionException("could not create jdbc connection", exc.getCause());
+                }
+                catch (DataAccessException exc)
+                {
+                    if(exc instanceof TypedException)
+                        throw new SQLMigrationException((TypedException) exc, migration);
+                    else
+                        throw new SQLMigrationException(exc.getMessage(), migration, exc);
                 }
 
                 migration.setDidRun(true);

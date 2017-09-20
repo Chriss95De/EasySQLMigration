@@ -11,14 +11,16 @@ public class ErrorHandler
 {
     private SQLErrorCodesFactory sqlErrorCodesFactory;
 
+    private DataSource dataSource;
+
     public ErrorHandler(DataSource dataSource)
     {
-        sqlErrorCodesFactory = SQLErrorCodesFactory.getInstance();
+        this.dataSource = dataSource;
         try
         {
+            sqlErrorCodesFactory = SQLErrorCodesFactory.getInstance();
             sqlErrorCodesFactory.registerDatabase(dataSource, dataSource.getConnection().getMetaData().getDatabaseProductName());
-            SQLErrorCodes errorCodes = sqlErrorCodesFactory.getErrorCodes(dataSource);
-            System.out.println();
+            SQLErrorCodes errorCodes = sqlErrorCodesFactory.getErrorCodes(dataSource.getConnection().getMetaData().getDatabaseProductName());
         }
         catch (SQLException e)
         {
@@ -29,8 +31,6 @@ public class ErrorHandler
     public String extractErroMessage(String reason, Throwable cause)
     {
         String message = "";
-
-        
 
         return message;
     }
