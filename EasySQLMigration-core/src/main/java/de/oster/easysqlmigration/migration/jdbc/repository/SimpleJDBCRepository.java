@@ -1,4 +1,4 @@
-package de.oster.easysqlmigration.migration;
+package de.oster.easysqlmigration.migration.jdbc.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 

@@ -13,6 +13,4 @@ public interface TypedException
     ErrorType getErrorType();
 
     String getErrorMessage();
-
-    Integer errorPos();
 }

@@ -1,12 +1,13 @@
-package de.oster.easysqlmigration.exception;
+package de.oster.easysqlmigration.exception.h2;
 
+import de.oster.easysqlmigration.exception.ExceptionTest;
 import de.oster.easysqlmigration.migration.CustomTest;
-import de.oster.easysqlmigration.migration.EasySQLMigration;
+import de.oster.easysqlmigration.migration.api.EasySQLMigration;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class H2ExceptionTest extends CustomTest
+public class H2ExceptionTest extends CustomTest implements ExceptionTest
 {
     @Test
     public void unknownDataTypeTest()  {

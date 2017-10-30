@@ -10,9 +10,11 @@ import org.apache.commons.io.IOUtils;
 /**
  * Created by Christian on 12.07.2017.
  */
-class SQLScriptObject
+public class SQLScriptObject
 {
     private String name;
+
+    private String file;
 
     private String version;
 
@@ -25,8 +27,9 @@ class SQLScriptObject
     public SQLScriptObject() {
     }
 
-    public SQLScriptObject(String name, String version, String sqlFile) throws IOException {
+    public SQLScriptObject(String name, String path, String version, String sqlFile) throws IOException {
         this.name = name;
+        this.file = path;
         this.version = version;
         this.hash = HashGenerator.getHash(this.getClass().getResourceAsStream(sqlFile));
         this.sqlScript = IOUtils.toString(this.getClass().getResourceAsStream(sqlFile), Charset.defaultCharset());
@@ -38,6 +41,18 @@ class SQLScriptObject
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    public boolean isDidRun() {
+        return didRun;
     }
 
     public String getVersion() {
@@ -84,6 +99,7 @@ class SQLScriptObject
 
         SQLScriptObject sqlScriptObject = new SQLScriptObject(
                 name,
+                file,
                 name.substring(0, lastOcc),
                 file);
 

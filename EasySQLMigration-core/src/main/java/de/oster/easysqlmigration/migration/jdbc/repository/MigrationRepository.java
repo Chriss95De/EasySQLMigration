@@ -1,17 +1,17 @@
-package de.oster.easysqlmigration.migration;
+package de.oster.easysqlmigration.migration.jdbc.repository;
 
 
 import java.sql.Timestamp;
 import java.util.List;
 
+import de.oster.easysqlmigration.migration.MigrationObject;
+import de.oster.easysqlmigration.migration.MigrationRowMapper;
+import de.oster.easysqlmigration.migration.SQLScriptObject;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
-/**
- * Created by Christian on 13.07.2017.
- */
-class MigrationRepository extends SimpleJDBCRepository {
+public class MigrationRepository extends SimpleJDBCRepository {
 
 
     public MigrationRepository() {

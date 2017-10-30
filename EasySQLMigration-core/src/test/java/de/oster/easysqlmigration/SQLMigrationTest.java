@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.oster.easysqlmigration.migration.CustomTest;
 import de.oster.easysqlmigration.migration.Migration;
-import de.oster.easysqlmigration.migration.EasySQLMigration;
+import de.oster.easysqlmigration.migration.api.EasySQLMigration;
 import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import org.junit.Assert;

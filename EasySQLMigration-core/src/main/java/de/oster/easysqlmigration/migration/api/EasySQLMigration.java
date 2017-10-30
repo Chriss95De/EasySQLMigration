@@ -1,6 +1,8 @@
-package de.oster.easysqlmigration.migration;
+package de.oster.easysqlmigration.migration.api;
 
 import de.oster.easysqlmigration.Connection;
+import de.oster.easysqlmigration.migration.EasySQLMigrationImpl;
+import de.oster.easysqlmigration.migration.Migration;
 import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 
@@ -9,7 +11,7 @@ import java.util.List;
 /**
  * Created by Christian on 12.07.2017.
  */
-public class EasySQLMigration extends EasySQLMigrationImpl implements SQLMigrationAPI
+public class EasySQLMigration extends EasySQLMigrationImpl
 {
 
     /**
@@ -126,7 +128,6 @@ public class EasySQLMigration extends EasySQLMigrationImpl implements SQLMigrati
         this.prefixes = prefixes;
     }
 
-    @Override
     public List<Migration> retriveMigrationInfo() {
         return this.getRunnedMigrations();
     }

@@ -1,17 +1,15 @@
-package de.oster.easysqlmigration.vendors.h2;
+package de.oster.easysqlmigration.vendors.postgres;
 
 import de.oster.easysqlmigration.migration.exception.ErrorType;
 import de.oster.easysqlmigration.migration.exception.errorhandling.type.Handler;
 import de.oster.easysqlmigration.migration.exception.errorhandling.type.SyntaxErrorHandler;
 import de.oster.easysqlmigration.vendors.TypedException;
+import org.postgresql.util.PSQLException;
+import org.postgresql.util.ServerErrorMessage;
 import org.springframework.dao.DataAccessException;
-
-import java.util.regex.Pattern;
 
 public class SyntaxException extends DataAccessException implements TypedException
 {
-
-    private int errorPos;
     private String errorMessage;
 
     public SyntaxException(String msg) {
@@ -24,23 +22,13 @@ public class SyntaxException extends DataAccessException implements TypedExcepti
 
         try
         {
-            errorMessage = "";
-            String[] messageParts = msg.split("\n");
-            for (int i = 0; i < messageParts.length; i++)
-            {
-                errorMessage += messageParts[i].replace("\r", "");
-                if(messageParts[i].contains("[*]"))
-                {
-                    errorPos = i;
-                    errorMessage += "          <-- syntax error";
-                    errorMessage = errorMessage.replace("[*]", "");
-                    break;
-                }
-            }
+            PSQLException realException = (PSQLException) cause;
+            ServerErrorMessage serverErrorMessage = realException.getServerErrorMessage();
+            errorMessage = msg;
         }
         catch (Exception e)
         {
-            errorMessage = msg;
+
         }
     }
 

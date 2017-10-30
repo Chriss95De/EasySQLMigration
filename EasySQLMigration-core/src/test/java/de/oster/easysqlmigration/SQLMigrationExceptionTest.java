@@ -1,7 +1,7 @@
 package de.oster.easysqlmigration;
 
 import de.oster.easysqlmigration.migration.CustomTest;
-import de.oster.easysqlmigration.migration.EasySQLMigration;
+import de.oster.easysqlmigration.migration.api.EasySQLMigration;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import org.junit.Assert;
 import org.junit.Test;

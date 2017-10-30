@@ -2,15 +2,13 @@ package de.oster.easysqlmigration.migration;
 
 import de.oster.easysqlmigration.Connection;
 import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
-import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
-import de.oster.easysqlmigration.migration.exception.errorhandling.ErrorHandler;
+import de.oster.easysqlmigration.migration.jdbc.repository.SimpleJDBCRepository;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;

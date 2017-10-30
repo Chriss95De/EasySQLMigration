@@ -14,6 +14,7 @@ import de.oster.easysqlmigration.Connection;
 import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import de.oster.easysqlmigration.migration.exception.errorhandling.ErrorHandler;
+import de.oster.easysqlmigration.migration.jdbc.repository.MigrationRepository;
 import de.oster.easysqlmigration.vendors.TypedException;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -21,12 +22,10 @@ import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
 
-import javax.annotation.PostConstruct;
-
 /**
  * Created by Christian on 12.07.2017.
  */
-class EasySQLMigrationImpl
+public class EasySQLMigrationImpl
 {
     protected static Logger log = Logger.getRootLogger();
     private final ClassLoader classLoader;
@@ -66,6 +65,7 @@ class EasySQLMigrationImpl
         migrationRepository = (MigrationRepository)persistenceManager.getRepository(MigrationRepository.class);
 
         ErrorHandler errorHandler = new ErrorHandler(this.persistenceManager.getDataSource());
+
     }
 
     public EasySQLMigrationImpl(ClassLoader classLoader)
@@ -178,17 +178,23 @@ class EasySQLMigrationImpl
 
             if(migration.didRun() == false)
             {
+                String curStatement = "";
                 try
                 {
-                    persistenceManager.get().execute(sqlScriptObj.getSqlScript());
+                    String[] sqlStatements = sqlScriptObj.getSqlScript().split(";");
+                    for (String sqlStr : sqlStatements)
+                    {
+                        curStatement = sqlStr+";";
+                        persistenceManager.get().execute(curStatement);
+                    }
                 }
                 catch (BadSqlGrammarException exc)
                 {
-                    throw new SQLMigrationException("\n"+sqlScriptObj.getName()+": "+exc.getSQLException().getMessage());
+                    throw new SQLMigrationException("\n"+sqlScriptObj.getName()+": "+exc.getSQLException().getMessage(), migration, sqlScriptObj, curStatement);
                 }
                 catch (UncategorizedSQLException exc)
                 {
-                    throw new SQLMigrationException(exc.getSQLException().getMessage(), migration, exc);
+                    throw new SQLMigrationException("\n"+sqlScriptObj.getName()+": "+exc.getSQLException().getMessage(), migration, sqlScriptObj, curStatement);
                 }
                 catch (CannotGetJdbcConnectionException exc)
                 {
@@ -197,9 +203,9 @@ class EasySQLMigrationImpl
                 catch (DataAccessException exc)
                 {
                     if(exc instanceof TypedException)
-                        throw new SQLMigrationException((TypedException) exc, migration);
+                        throw new SQLMigrationException((TypedException) exc, migration, sqlScriptObj, curStatement);
                     else
-                        throw new SQLMigrationException(exc.getMessage(), migration, exc);
+                        throw new SQLMigrationException("\n"+sqlScriptObj.getName()+": "+exc.getMessage(), migration, sqlScriptObj, curStatement);
                 }
 
                 migration.setDidRun(true);

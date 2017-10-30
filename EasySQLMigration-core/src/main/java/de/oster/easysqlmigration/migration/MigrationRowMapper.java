@@ -5,10 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * Created by Christian on 14.07.2017.
- */
-class MigrationRowMapper implements RowMapper<MigrationObject>
+public class MigrationRowMapper implements RowMapper<MigrationObject>
 {
     public MigrationObject mapRow(ResultSet rs, int rowNum) throws SQLException {
 

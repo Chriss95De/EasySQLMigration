@@ -228,6 +228,18 @@
         <property name="deadlockLoserCodes">
             <value>40P01</value>
         </property>
+        <property name="customTranslations">
+            <list>
+                <bean id="psqlUnknownDataType" class="org.springframework.jdbc.support.CustomSQLErrorCodesTranslation">
+                    <property name="errorCodes" value="50004" />
+                    <property name="exceptionClass" value="de.oster.easysqlmigration.vendors.postgres.UnknownDataTypeException" />
+                </bean>
+                <bean id="psqlSyntaxError" class="org.springframework.jdbc.support.CustomSQLErrorCodesTranslation">
+                    <property name="errorCodes" value="03000,42000,42601,42602,42622,42804,42P01" />
+                    <property name="exceptionClass" value="de.oster.easysqlmigration.vendors.postgres.SyntaxException" />
+                </bean>
+            </list>
+        </property>
     </bean>
 
     <bean id="Sybase" class="org.springframework.jdbc.support.SQLErrorCodes">

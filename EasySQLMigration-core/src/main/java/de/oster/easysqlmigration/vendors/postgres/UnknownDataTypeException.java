@@ -1,14 +1,10 @@
-package de.oster.easysqlmigration.vendors.h2;
+package de.oster.easysqlmigration.vendors.postgres;
 
 import de.oster.easysqlmigration.migration.exception.ErrorType;
-import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import de.oster.easysqlmigration.migration.exception.errorhandling.type.Handler;
 import de.oster.easysqlmigration.migration.exception.errorhandling.type.UnkownDataTypeHandler;
 import de.oster.easysqlmigration.vendors.TypedException;
 import org.springframework.dao.DataAccessException;
-
-import java.sql.SQLException;
-import java.util.regex.Pattern;
 
 public class UnknownDataTypeException extends DataAccessException implements TypedException
 {
@@ -41,30 +37,7 @@ public class UnknownDataTypeException extends DataAccessException implements Typ
     {
         String[] messageParts = message.split("\n");
 
-        String unknownType = messageParts[1].substring(messageParts[1].indexOf("\"")+1, messageParts[1].lastIndexOf("\""));
-
-        for (int i = 4; i < messageParts.length; i++)
-        {
-            String line = messageParts[i].toLowerCase();
-            if(line.contains(unknownType.toLowerCase()))
-                errorPos = i;
-        }
-
-        String newMessage = "";
-        for (int i = 0; i < messageParts.length; i++)
-        {
-            newMessage += messageParts[i].replace("\r", "");
-
-            if(errorPos == i)
-            {
-                newMessage += "             <-- UNKNOWN TYPE";
-                break;
-            }
-
-            newMessage += "\n";
-        }
-
-        return newMessage;
+        return "";
     }
 
     @Override
