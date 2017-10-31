@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.oster.easysqlmigration.Connection;
+import de.oster.easysqlmigration.migration.api.EasySQLMigration;
 import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import de.oster.easysqlmigration.migration.exception.errorhandling.ErrorHandler;
@@ -25,12 +26,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 
+import static de.oster.easysqlmigration.migration.api.EasySQLMigration.log;
+
 /**
  * Created by Christian on 12.07.2017.
  */
 public class EasySQLMigrationImpl
 {
-    protected static Logger log = Logger.getRootLogger();
     private final ClassLoader classLoader;
 
     //JDBC Information
@@ -167,11 +169,11 @@ public class EasySQLMigrationImpl
                     log.info("started sqlmigration " + sqlScriptObj.getName());
                     try
                     {
-                        log.info("rolled back migrations");
                         migrate(sqlScriptObj, allMigrations);
                     }
                     catch (SQLMigrationException exc)
                     {
+                        log.info("rolled back migrations");
                         throw new SQLMigrationException(exc.getMessage());
                     }
                     log.info("ended sqlmigration: " + sqlScriptObj.getName());

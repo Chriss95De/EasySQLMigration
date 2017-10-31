@@ -5,6 +5,7 @@ import de.oster.easysqlmigration.migration.EasySQLMigrationImpl;
 import de.oster.easysqlmigration.migration.Migration;
 import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  */
 public class EasySQLMigration extends EasySQLMigrationImpl
 {
+    public static Logger log = Logger.getRootLogger();
 
     /**
      * @throws SQLConnectionException if there is something wrong with your jdbc connection
