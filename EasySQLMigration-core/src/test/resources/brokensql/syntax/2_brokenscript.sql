@@ -5,10 +5,10 @@ CREATE TABLE Orders2 (
     PRIMARY KEY (OrderID)
 );
 
-CREATE TABLE Persons (
+CREATE TABLE Persons2 (
     ID int NOT NULL,
     LastName varchar(255) NOT NULL,
-    FirstName varchar(255)
+    FirstName varchar(255
 );
 
 CREATE TABLE TestTable (

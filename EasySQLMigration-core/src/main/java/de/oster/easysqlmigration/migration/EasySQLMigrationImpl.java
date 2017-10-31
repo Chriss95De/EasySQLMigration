@@ -138,54 +138,50 @@ public class EasySQLMigrationImpl
     @Transactional(rollbackFor = java.lang.Exception.class)
     protected void doMigration() throws SQLMigrationException {
 
-        persistenceManager.getTransactionTemplate().execute(new TransactionCallback<Object>() {
-            @Override
-            public Object doInTransaction(TransactionStatus status)
+        persistenceManager.getTransactionTemplate().execute(status -> {
+            log.info("---started migration---");
+
+            Long startTime = System.currentTimeMillis();
+
+            List<SQLScriptObject> sqlScriptObjects;
+            try
             {
-                log.info("---started migration---");
+                sqlScriptObjects = searchSQLScripts(urlPath, prefixes, false);
+            }
+            catch (IOException e)
+            {
+                throw new SQLMigrationException(e.getMessage(), e.getCause());
+            }
 
-                Long startTime = System.currentTimeMillis();
+            if(sqlScriptObjects == null)
+                return null;
 
-                List<SQLScriptObject> sqlScriptObjects = new ArrayList<>();
+            //cache all migrations to run checks on them
+            migrationRepository.createMigrationTableIfNotExist(schemaWithTabel);
+            List<MigrationObject> allMigrations = migrationRepository.getAllMigrations(schemaWithTabel);
+
+            for(SQLScriptObject sqlScriptObj : sqlScriptObjects)
+            {
+                log.info("");
+                log.info("started sqlmigration " + sqlScriptObj.getName());
                 try
                 {
-                    sqlScriptObjects = searchSQLScripts(urlPath, prefixes, false);
+                    migrate(sqlScriptObj, allMigrations);
                 }
-                catch (IOException e)
+                catch (SQLMigrationException exc)
                 {
-                    throw new SQLMigrationException(e.getMessage(), e.getCause());
+                    log.info("rolled back migrations");
+                    throw new SQLMigrationException(exc.getMessage());
                 }
-
-                if(sqlScriptObjects == null)
-                    return null;
-
-                //cache all migrations to run checks on them
-                migrationRepository.createMigrationTableIfNotExist(schemaWithTabel);
-                List<MigrationObject> allMigrations = migrationRepository.getAllMigrations(schemaWithTabel);
-
-                for(SQLScriptObject sqlScriptObj : sqlScriptObjects)
-                {
-                    log.info("");
-                    log.info("started sqlmigration " + sqlScriptObj.getName());
-                    try
-                    {
-                        migrate(sqlScriptObj, allMigrations);
-                    }
-                    catch (SQLMigrationException exc)
-                    {
-                        log.info("rolled back migrations");
-                        throw new SQLMigrationException(exc.getMessage());
-                    }
-                    log.info("ended sqlmigration: " + sqlScriptObj.getName());
-                }
-
-                log.info("");
-                log.info("---ended migration---");
-                log.info("");
-                log.info("createInstance took " + String.valueOf((System.currentTimeMillis()-startTime)/60) + " seconds.");
-                log.info("");
-                return null;
+                log.info("ended sqlmigration: " + sqlScriptObj.getName());
             }
+
+            log.info("");
+            log.info("---ended migration---");
+            log.info("");
+            log.info("createInstance took " + String.valueOf((System.currentTimeMillis()-startTime)/60) + " seconds.");
+            log.info("");
+            return null;
         });
     }
 
