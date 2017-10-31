@@ -161,11 +161,13 @@ public class EasySQLMigrationImpl
                 migrationRepository.createMigrationTableIfNotExist(schemaWithTabel);
                 List<MigrationObject> allMigrations = migrationRepository.getAllMigrations(schemaWithTabel);
 
-                for(SQLScriptObject sqlScriptObj : sqlScriptObjects) {
+                for(SQLScriptObject sqlScriptObj : sqlScriptObjects)
+                {
                     log.info("");
                     log.info("started sqlmigration " + sqlScriptObj.getName());
                     try
                     {
+                        log.info("rolled back migrations");
                         migrate(sqlScriptObj, allMigrations);
                     }
                     catch (SQLMigrationException exc)
