@@ -5,7 +5,11 @@ import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.jdbc.repository.SimpleJDBCRepository;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 
@@ -18,6 +22,8 @@ import java.util.List;
  */
 class PersistenceManager
 {
+    private TransactionTemplate transactionTemplate;
+    
     private JdbcTemplate jdbcTemplate;
 
     private DataSource ds;
@@ -32,14 +38,16 @@ class PersistenceManager
                     connection.getJdbcURL(),
                     connection.getUser(),
                     connection.getPassword());
+
+            DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(ds);
+            jdbcTemplate = new JdbcTemplate(transactionManager.getDataSource());
+            transactionTemplate = new TransactionTemplate(transactionManager);
+
         }
         catch (Exception exc)
         {
             throw new SQLConnectionException("error while creating the jdbc connection", exc.getCause());
         }
-
-        //SQLMigrationException.errorHandler = new ErrorHandler(ds);
-        jdbcTemplate = new JdbcTemplate(ds);
 
         try
         {
@@ -73,6 +81,10 @@ class PersistenceManager
     public JdbcTemplate get()
     {
         return jdbcTemplate;
+    }
+
+    public TransactionTemplate getTransactionTemplate() {
+        return transactionTemplate;
     }
 
     public DataSource getDataSource() {

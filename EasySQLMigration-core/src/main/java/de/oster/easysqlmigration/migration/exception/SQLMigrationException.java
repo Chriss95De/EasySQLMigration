@@ -6,9 +6,12 @@ import de.oster.easysqlmigration.migration.SQLScriptObject;
 import de.oster.easysqlmigration.migration.exception.errorhandling.ErrorHandler;
 import de.oster.easysqlmigration.migration.exception.errorhandling.type.Handler;
 import de.oster.easysqlmigration.vendors.TypedException;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import static de.oster.easysqlmigration.migration.exception.errorhandling.type.HandlerUtil.info;
 
 public class SQLMigrationException extends RuntimeException
 {
@@ -28,13 +31,15 @@ public class SQLMigrationException extends RuntimeException
     {
         String errorMessage = "";
         errorMessage += "\n";
-        errorMessage += "their occurred an error in " + sqlScriptObject.getFile();
-        errorMessage += "\n";
-        errorMessage += "statement: ";
-        errorMessage += "\n" + specificStatement;
-        errorMessage += "\n";
-        errorMessage += "error message: ";
+        errorMessage += info("SQLMigrationException");
+        errorMessage += info("error in " + sqlScriptObject.getFile());
+        errorMessage += info("error message: ");
         errorMessage += "\n" + reason;
+        errorMessage += "\n";
+        errorMessage += "\n";
+        //errorMessage += info("statement position in " + sqlScriptObject.getFile() + " is " + sqlScriptPos);
+        errorMessage += info("problem statement: ");
+        errorMessage += specificStatement;
         errorMessage += "\n";
 
         throw new SQLMigrationException(errorMessage);

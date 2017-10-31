@@ -3,6 +3,7 @@ package de.oster.easysqlmigration.exception.postgres;
 
 import org.junit.After;
 import org.junit.Before;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;

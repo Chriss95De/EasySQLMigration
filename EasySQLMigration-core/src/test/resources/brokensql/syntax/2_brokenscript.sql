@@ -1,4 +1,4 @@
-CREATE TABLE Orders (
+CREATE TABLE Orders2 (
     OrderID int NOT NULL,
     OrderNumber int NOT NULL,
     PersonID int,
