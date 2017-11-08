@@ -100,7 +100,7 @@ public class SQLScriptObject
         SQLScriptObject sqlScriptObject = new SQLScriptObject(
                 name,
                 file,
-                name.substring(0, lastOcc),
+                name.substring(0, lastOcc).replaceAll("[^\\d.]", ""),
                 file);
 
         return sqlScriptObject;

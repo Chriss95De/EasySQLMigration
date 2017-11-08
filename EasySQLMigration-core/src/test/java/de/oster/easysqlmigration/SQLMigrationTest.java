@@ -84,6 +84,7 @@ public class SQLMigrationTest extends CustomTest
         catch (SQLConnectionException exc)
         {
             System.out.println(exc.getMessage());
+            exc.printStackTrace();
             failed = true;
         }
         Assert.assertTrue(failed);

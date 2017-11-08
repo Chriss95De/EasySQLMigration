@@ -153,8 +153,10 @@ public class EasySQLMigrationImpl
                 throw new SQLMigrationException(e.getMessage(), e.getCause());
             }
 
-            if(sqlScriptObjects == null)
+            if(sqlScriptObjects == null){
+                log.info("---nothing to migrate---");
                 return null;
+            }
 
             //cache all migrations to run checks on them
             migrationRepository.createMigrationTableIfNotExist(schemaWithTabel);
@@ -179,7 +181,7 @@ public class EasySQLMigrationImpl
             log.info("");
             log.info("---ended migration---");
             log.info("");
-            log.info("createInstance took " + String.valueOf((System.currentTimeMillis()-startTime)/60) + " seconds.");
+            log.info("migration took " + String.valueOf((System.currentTimeMillis()-startTime)/60) + " seconds.");
             log.info("");
             return null;
         });
@@ -252,17 +254,23 @@ public class EasySQLMigrationImpl
         for (SQLScriptObject sqlScriptObject : sqlScriptObjects)
         {
             String[] numbers = sqlScriptObject.getVersion().split(versionSeparator);
+            String lastStr = "";
             try
             {
                 //First check: should all be numbers
                 for (String number : numbers) {
+                    lastStr = number;
                     Integer.parseInt(number);
                 }
             }
             catch (NumberFormatException exc)
             {
                 throw new SQLMigrationException("\nbad syntax in your sqlmigration filename: " + sqlScriptObject.getName() + "\n"+
-                "can not parse the version information");
+                "can not parse the version information out " + lastStr + "\n"+
+                "\n"+
+                "version file name separator: " + versionFileNameSeparator + "\n" +
+                "under version separator: " + versionSeparator + "\n"+
+                "should look something like " + "V1"+versionSeparator+"2"+versionFileNameSeparator+"sickmigration.sql");
             }
         }
     }

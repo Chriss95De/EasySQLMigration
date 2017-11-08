@@ -74,19 +74,17 @@ public class EasySQLMigration extends EasySQLMigrationImpl
      * Separates the version in the filename from the actual script name
      * For example: 1_Init.sql  <- separator = "_"
      *
+     * DEFAULT: _
+     *
      * @param separator
      */
-    public void setSeparator(String separator)
+    public void setFileNameVersionSeparator(String separator)
     {
         this.versionFileNameSeparator = separator;
     }
 
-    public String getSeparator()
+    public String getConnection()
     {
-        return this.versionFileNameSeparator;
-    }
-
-    public String getConnection() {
         return this.getConnection();
     }
 
