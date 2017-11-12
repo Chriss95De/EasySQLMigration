@@ -4,11 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import de.oster.easysqlmigration.Connection;
 import de.oster.easysqlmigration.migration.api.EasySQLMigration;
@@ -18,6 +14,8 @@ import de.oster.easysqlmigration.migration.exception.errorhandling.ErrorHandler;
 import de.oster.easysqlmigration.migration.jdbc.repository.MigrationRepository;
 import de.oster.easysqlmigration.vendors.TypedException;
 import org.apache.log4j.Logger;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -94,7 +92,7 @@ public class EasySQLMigrationImpl
           throws IOException, SQLMigrationException
 
     {
-        List<String> files = new ArrayList<String>();
+        List<Resource> files = new ArrayList<Resource>();
 
         if(paths == null)
             return new ArrayList<SQLScriptObject>();
@@ -105,8 +103,8 @@ public class EasySQLMigrationImpl
         }
 
         List<SQLScriptObject> sqlScriptObjectsTemp = new ArrayList<SQLScriptObject>();
-        for(String file : files)
-            sqlScriptObjectsTemp.add(SQLScriptObject.createFromFile(versionFileNameSeparator, file));
+        for(Resource resource : files)
+            sqlScriptObjectsTemp.add(SQLScriptObject.createFromFile(versionFileNameSeparator, resource));
 
         runSyntaxCheck(sqlScriptObjectsTemp);
 
@@ -292,29 +290,36 @@ public class EasySQLMigrationImpl
     };
 
 
-    private List<String> getResourceFiles( String path ) throws IOException {
-        List<String> filenames = new ArrayList<>();
-
-        try (
-              InputStream in = getResourceAsStream( path );
-              BufferedReader br = new BufferedReader( new InputStreamReader( in ) ) ) {
-            String resource;
-
-            while( (resource = br.readLine()) != null ) {
-                if(!path.equals("/"+resource))
-                    filenames.add( path+"/"+resource );
-            }
-        }
-
-        return filenames;
+    private List<Resource> getResourceFiles(String url) throws IOException
+    {
+        PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources = pathMatchingResourcePatternResolver.getResources(url+"/*.sql");
+        return new ArrayList<>(Arrays.asList(resources));
     }
 
-    private InputStream getResourceAsStream( String resource ) {
-        final InputStream in
-              = getContextClassLoader().getResourceAsStream( resource );
-
-        return in == null ? getClass().getResourceAsStream( resource ) : in;
-    }
+//    private List<String> getResourceFiles( String path ) throws IOException {
+//        List<String> filenames = new ArrayList<>();
+//
+//        try (
+//              InputStream in = getResourceAsStream( path );
+//              BufferedReader br = new BufferedReader( new InputStreamReader( in ) ) ) {
+//            String resource;
+//
+//            while( (resource = br.readLine()) != null ) {
+//                if(!path.equals("/"+resource))
+//                    filenames.add( path+"/"+resource );
+//            }
+//        }
+//
+//        return filenames;
+//    }
+//
+//    private InputStream getResourceAsStream( String resource ) {
+//        final InputStream in
+//              = getContextClassLoader().getResourceAsStream( resource );
+//
+//        return in == null ? getClass().getResourceAsStream( resource ) : in;
+//    }
 
     private ClassLoader getContextClassLoader() {
         return Thread.currentThread().getContextClassLoader();

@@ -1,11 +1,15 @@
 package de.oster.easysqlmigration.migration;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import de.oster.easysqlmigration.migration.util.HashGenerator;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.Resource;
 
 /**
  * Created by Christian on 12.07.2017.
@@ -31,8 +35,8 @@ public class SQLScriptObject
         this.name = name;
         this.file = path;
         this.version = version;
-        this.hash = HashGenerator.getHash(this.getClass().getResourceAsStream(sqlFile));
-        this.sqlScript = IOUtils.toString(this.getClass().getResourceAsStream(sqlFile), Charset.defaultCharset());
+        this.hash = HashGenerator.getHash(new ByteArrayInputStream(sqlFile.getBytes()));
+        this.sqlScript = sqlFile;
     }
 
     public String getName() {
@@ -87,8 +91,9 @@ public class SQLScriptObject
         this.sqlScript = sqlScript;
     }
 
-    public static SQLScriptObject createFromFile(String separator, String file) throws IOException, SQLMigrationException {
+    public static SQLScriptObject createFromFile(String separator, Resource resource) throws IOException, SQLMigrationException {
 
+        String file = resource.getFilename();
         String name = file.substring(file.lastIndexOf("/")+1, file.length());
 
         int lastOcc = name.lastIndexOf(separator);
@@ -100,8 +105,8 @@ public class SQLScriptObject
         SQLScriptObject sqlScriptObject = new SQLScriptObject(
                 name,
                 file,
-                name.substring(0, lastOcc).replaceAll("[^\\d.]", ""),
-                file);
+                name.substring(0, lastOcc).replaceAll("[^\\d.+_]", ""),
+                FileUtils.readFileToString(resource.getFile()));
 
         return sqlScriptObject;
     }

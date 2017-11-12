@@ -15,7 +15,7 @@ public class H2ExceptionTest extends CustomTest implements ExceptionTest
         EasySQLMigration sqlMigration = EasySQLMigration.createInstance(CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
 
         //folder to sql scripts that are broken
-        sqlMigration.setSQLScripts("/brokensql/unknowndatatype");
+        sqlMigration.setSQLScripts("/brokensql/unknowndatatype/");
 
         boolean failed = false;
         try
@@ -37,7 +37,7 @@ public class H2ExceptionTest extends CustomTest implements ExceptionTest
         EasySQLMigration sqlMigration = EasySQLMigration.createInstance(CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
 
         //folder to sql scripts that are broken
-        sqlMigration.setSQLScripts("/brokensql/syntax");
+        sqlMigration.setSQLScripts("/brokensql/syntax/");
 
         boolean failed = false;
         try
