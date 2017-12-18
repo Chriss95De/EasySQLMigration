@@ -51,4 +51,26 @@ public class PostgresExceptionTest extends PSQLConnection implements ExceptionTe
 
         Assert.assertTrue(failed);
     }
+
+    @Override
+    @Test
+    public void handleComments() {
+        EasySQLMigration sqlMigration = EasySQLMigration.createInstance(jdbcURL, user, password);
+
+        //folder to sql scripts that are broken
+        sqlMigration.setSQLScripts("/brokensql/comments");
+
+        boolean failed = false;
+        try
+        {
+            sqlMigration.migrate();
+        }
+        catch (SQLMigrationException e)
+        {
+            e.printStackTrace();
+            failed = true;
+        }
+
+        Assert.assertTrue(failed);
+    }
 }

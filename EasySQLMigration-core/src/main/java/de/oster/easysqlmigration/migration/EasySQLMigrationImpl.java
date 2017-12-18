@@ -1,28 +1,21 @@
 package de.oster.easysqlmigration.migration;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.*;
-
 import de.oster.easysqlmigration.Connection;
-import de.oster.easysqlmigration.migration.api.EasySQLMigration;
 import de.oster.easysqlmigration.migration.exception.SQLConnectionException;
 import de.oster.easysqlmigration.migration.exception.SQLMigrationException;
 import de.oster.easysqlmigration.migration.exception.errorhandling.ErrorHandler;
 import de.oster.easysqlmigration.migration.jdbc.repository.MigrationRepository;
 import de.oster.easysqlmigration.vendors.TypedException;
-import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
+
+import java.io.IOException;
+import java.util.*;
 
 import static de.oster.easysqlmigration.migration.api.EasySQLMigration.log;
 
@@ -166,6 +159,7 @@ public class EasySQLMigrationImpl
                 log.info("started sqlmigration " + sqlScriptObj.getName());
                 try
                 {
+                    cleanUpFile(sqlScriptObj);
                     migrate(sqlScriptObj, allMigrations);
                 }
                 catch (SQLMigrationException exc)
@@ -183,6 +177,12 @@ public class EasySQLMigrationImpl
             log.info("");
             return null;
         });
+    }
+
+    private void cleanUpFile(SQLScriptObject sqlScriptObj)
+    {
+         String commentLessSQLScript = sqlScriptObj.getSqlScript().replaceAll("((['\"])(?:(?!\\2|\\\\).|\\\\.)*\\2)|\\/\\/[^\\n]*|\\/\\*(?:[^*]|\\*(?!\\/))*\\*\\/", "");
+         sqlScriptObj.setSqlScript(commentLessSQLScript);
     }
 
     private void migrate(SQLScriptObject sqlScriptObj, List<MigrationObject> allMigrations)

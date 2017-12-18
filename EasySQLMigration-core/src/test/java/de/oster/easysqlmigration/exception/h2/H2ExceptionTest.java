@@ -52,4 +52,26 @@ public class H2ExceptionTest extends CustomTest implements ExceptionTest
 
         Assert.assertTrue(failed);
     }
+
+    @Override
+    @Test
+    public void handleComments() {
+        EasySQLMigration sqlMigration = EasySQLMigration.createInstance(CustomTest.jdbcURL, CustomTest.user, CustomTest.password);
+
+        //folder to sql scripts that are broken
+        sqlMigration.setSQLScripts("/brokensql/comments/");
+
+        boolean failed = false;
+        try
+        {
+            sqlMigration.migrate();
+        }
+        catch (SQLMigrationException e)
+        {
+            e.printStackTrace();
+            failed = true;
+        }
+
+        Assert.assertTrue(failed);
+    }
 }

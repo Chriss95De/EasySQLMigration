@@ -12,4 +12,7 @@ public interface ExceptionTest {
 
     @Test
     void sytanxTest();
+
+    @Test
+    void handleComments();
 }

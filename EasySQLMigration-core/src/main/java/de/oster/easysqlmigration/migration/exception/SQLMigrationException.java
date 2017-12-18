@@ -15,6 +15,7 @@ import static de.oster.easysqlmigration.migration.exception.errorhandling.type.H
 
 public class SQLMigrationException extends RuntimeException
 {
+    private String errorSQL;
     public ErrorHandler errorHandler;
 
     public SQLMigrationException(String reason)
@@ -41,6 +42,8 @@ public class SQLMigrationException extends RuntimeException
         errorMessage += info("problem statement: ");
         errorMessage += specificStatement;
         errorMessage += "\n";
+
+        errorSQL = specificStatement;
 
         throw new SQLMigrationException(errorMessage);
     }
